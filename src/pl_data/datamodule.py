@@ -30,7 +30,7 @@ def worker_init_fn(id: int):
     random.seed(uint64_seed)
 
 
-class MyDataModule(pl.LightningDataModule):
+class ImageDataModule(pl.LightningDataModule):
     def __init__(
         self,
         datasets: DictConfig,
