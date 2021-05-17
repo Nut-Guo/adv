@@ -18,7 +18,6 @@ class PatchNet(pl.LightningModule):
     def __init__(self, yolo_version, patch_size=100, init_patch = 'random', *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
-        self.yolo.eval()
         self.patch_size = patch_size
         self.patch_applier = PatchApplier()
         self.patch_transformer = PatchTransformer(self.yolo_config.height, self.patch_size)
@@ -59,14 +58,15 @@ class PatchNet(pl.LightningModule):
         adv_batch = self.patch_transformer(self.patch)
         image_batch = self.patch_applier(image_batch, adv_batch)
         image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
+        # with torch.no_grad():
+        self.yolo.eval()
         detections = self.yolo(image_batch)
-        # pred = self.pred_extractor(detections)
-        detections = self.yolo._split_detections(detections)
-        pred = self.yolo._filter_detections(detections)
-        # detections['scores']
+        pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
         tv_loss = tv * 2.5
-        det_loss = torch.mean(torch.cat(pred['classprobs']))
+        det_loss = torch.mean(torch.cat(pred))
+        self.log('det_loss', det_loss)
+        self.log('tv_loss', tv_loss)
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
         return loss
 
@@ -114,7 +114,7 @@ class PatchNet(pl.LightningModule):
             - None - Fit will run without any optimizer.
         """
         opt = hydra.utils.instantiate(
-            self.hparams.optim.optimizer, params=self.parameters(), _convert_="partial"
+            self.hparams.optim.optimizer, params=[self.patch], _convert_="partial"
         )
         if not self.hparams.optim.use_lr_scheduler:
             return [opt]

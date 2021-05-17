@@ -128,7 +128,7 @@ def run(cfg: DictConfig) -> None:
         logger=wandb_logger,
         callbacks=callbacks,
         deterministic=cfg.train.deterministic,
-        val_check_interval=cfg.logging.val_check_interval,
+        # val_check_interval=cfg.logging.val_check_interval,
         progress_bar_refresh_rate=cfg.logging.progress_bar_refresh_rate,
         **cfg.train.pl_trainer,
     )

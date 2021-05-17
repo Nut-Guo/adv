@@ -169,7 +169,7 @@ class PredExtractor(nn.Module):
     def forward(self, detection):
         detections = split_detections(detection)
         detections = filter_detections(detections, target_class=self.target_class)
-        return detections
+        return detections['classprobs']
 
 
 def main():
