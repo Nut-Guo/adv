@@ -8,110 +8,42 @@ from omegaconf import DictConfig
 from torch.optim import Optimizer
 
 from src.common.utils import PROJECT_ROOT
-
-
-class PatchAdvNet(pl.LightningModule):
-    def __init__(self, model_name='yolov4-tiny', dataset=WiderPersonDataset, patch_size=100, batch_size=64,
-                 datamodule=ImageDataModule):
-        super().__init__()
-        self.yolo, self.config = get_model(model_name)
-        target_size = (self.config.width, self.config.height)
-        self.patch_size = patch_size
-        self.automatic_optimization = True
-        self.reset_patch()
-        self.batch_size = batch_size
-        # self.datamodule = datamodule(dataset)
-        self.lastpatch = None
-        # self.bce = torch.nn.BCELoss()
-        # self.train_dataloader, self.val_dataloader = datamodule.train_dataloader, datamodule.val_dataloader
-        self.transforms = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize(target_size),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-        dset = dataset(transforms=self.transforms)
-        train_size = int(float(len(dset)) * 0.9)
-        val_size = len(dset) - train_size
-        self.train_set, self.val_set = random_split(dset, [train_size, val_size])
-
-    def reset_patch(self):
-        self.patch = PatchNet(self.patch_size)
-
-    def _infer(self, image):
-        self.yolo.eval()
-        detections = self.yolo(image)
-        detections = self.yolo._split_detections(detections)
-        detections = self.yolo._filter_detections(detections)
-        return list(zip(detections['boxes'], detections['scores'], detections['labels']))
-
-    def forward(self, x):
-        x = self.patch(x)
-        x = self._infer(x)
-        return x
-
-    def get_loss(self, results, target='person'):
-        confidences = []
-        for i, result in enumerate(results):
-            bbox, confidence, id = result
-            if target:
-                # mask = torch.tensor([NAME2ID[i] for i in target],dtype = torch.long).unsqueeze(0).T
-                # mask = torch.any(id.eq(mask), 0)
-                mask = id.eq(NAME2ID[target])
-                confidence = confidence[mask]
-                confidences.append(confidence)
-            # confidences.append(confidence)
-        confidences = torch.cat(confidences).mean() if confidences else torch.tensor(0, dtype=torch.float32)
-        # target = torch.zeros_like(confidences)
-        # return self.bce(confidences, target)
-        return confidences.sum()
-
-    def training_step(self, batch, batch_idx):
-        # if type(batch) is tuple:
-        #     x, position = batch
-        #     x = self.patch(x, position)
-        # else:
-        x = batch
-        x = self.patch(x)
-        x = self._infer(x)
-        loss = self.get_loss(x)
-        self.log('train_loss', loss)
-        if (batch_idx % 1000 == 999):
-            patch = self.patch.patch.clone().detach().cpu().permute((1, 2, 0))
-            if self.lastpatch != None:
-                delta = patch - self.lastpatch
-                print(delta.max())
-            self.lastpatch = patch
-            plt.figure()
-            plt.axis('off')
-            plt.imshow(patch)
-            plt.show()
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-        # if type(batch) is tuple:
-        #     x, position = batch
-        #     x = self.patch(x, position)
-        # else:
-        x = batch
-        x = self.patch(x)
-        x = self._infer(x)
-        loss = self.get_loss(x)
-        self.log('val_loss', loss)
-        if (batch_idx % 1000 == 999):
-            img = x.clone().detach().cpu().permute((1, 2, 0))
-            plt.figure()
-            plt.axis('off')
-            plt.imshow(x)
-            plt.show()
-        return loss
+from src.pl_modules.yolo import *
+from src.pl_modules.patch import *
+import matplotlib.pyplot as plt
+# from src.pl_modules.median_pool import *
 
 
 class PatchNet(pl.LightningModule):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, yolo_version, patch_size=100, init_patch = 'random', *args, **kwargs) -> None:
         super().__init__()
-        self.save_hyperparameters() # populate self.hparams with args and kwargs automagically!
+        self.yolo, self.yolo_config = get_yolo(yolo_version)
+        self.yolo.eval()
+        self.patch_size = patch_size
+        self.patch_applier = PatchApplier()
+        self.patch_transformer = PatchTransformer(self.yolo_config.height, self.patch_size)
+        self.pred_extractor = PredExtractor('person')
+        self.total_variation = TotalVariation()
+        self.patch = nn.Parameter(self.generate_patch(init_patch))
+        self.patch.requires_grad = True
+        self.register_parameter(name='patch', param=self.patch)
+        self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
 
-    def forward(self, **kwargs) -> Dict[str, torch.Tensor]:
+    def generate_patch(self, patch_type):
+        """
+        Generate a random patch as a starting point for optimization.
+
+        :param patch_type: Can be 'gray' or 'random'. Whether or not generate a gray or a random patch.
+        :return:
+        """
+        if patch_type == 'gray':
+            adv_patch = torch.full((3, self.patch_size, self.patch_size), 0.5)
+        elif patch_type == 'random':
+            adv_patch = torch.rand((3, self.patch_size, self.patch_size))
+
+        return adv_patch
+
+    def forward(self, img_batch, **kwargs) -> Dict[str, torch.Tensor]:
         """
         Method for the forward pass.
         'training_step', 'validation_step' and 'test_step' should call
@@ -119,11 +51,24 @@ class PatchNet(pl.LightningModule):
         Returns:
             output_dict: forward output containing the predictions (output logits ecc...) and the loss if any.
         """
+
         raise NotImplementedError
 
     def step(self, batch: Any, batch_idx: int):
-
-        raise NotImplementedError
+        image_batch = batch['image']
+        adv_batch = self.patch_transformer(self.patch)
+        image_batch = self.patch_applier(image_batch, adv_batch)
+        image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
+        detections = self.yolo(image_batch)
+        # pred = self.pred_extractor(detections)
+        detections = self.yolo._split_detections(detections)
+        pred = self.yolo._filter_detections(detections)
+        # detections['scores']
+        tv = self.total_variation(self.patch)
+        tv_loss = tv * 2.5
+        det_loss = torch.mean(torch.cat(pred['classprobs']))
+        loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
+        return loss
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         loss = self.step(batch, batch_idx)
@@ -177,7 +122,6 @@ class PatchNet(pl.LightningModule):
             self.hparams.optim.lr_scheduler, optimizer=opt
         )
         return [opt], [scheduler]
-
 
 
 @hydra.main(config_path=str(PROJECT_ROOT / "conf"), config_name="default")

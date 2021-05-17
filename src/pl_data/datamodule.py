@@ -112,6 +112,7 @@ def main(cfg: omegaconf.DictConfig):
     datamodule: pl.LightningDataModule = hydra.utils.instantiate(
         cfg.data.datamodule, _recursive_=False
     )
+    print(datamodule)
 
 
 if __name__ == "__main__":

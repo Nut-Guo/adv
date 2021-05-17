@@ -1,2 +1,5 @@
-['remote "myremote"']
-    url = gdrive://appDataFolder
+[core]
+    remote = ssh-storage
+['remote "ssh-storage"']
+    url = ssh://dataset@42.193.116.77/upload
+    ask_password = true

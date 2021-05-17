@@ -7,36 +7,24 @@ import pytorch_lightning as pl
 import torch
 import os
 from omegaconf import ValueNode
+from torchvision import transforms
 from torch.utils.data import Dataset
 from PIL import Image
 from src.common.utils import PROJECT_ROOT
 
-class DHDDataset(object):
-    def __init__(self, root = 'data/DHD', transforms = None):
-        self.root = root
-        self.transforms = transforms
-        with open(os.path.join(DHD_PATH, 'dhd_coco.json')) as f:
-            self.data = json.load(f)
-        self.imgs = list(sorted(os.listdir(os.path.join(root, "Images"))))
-
-    def __getitem__(self, idx):
-        img_path = os.path.join(self.root, "Images", self.imgs[idx])
-        img = Image.open(img_path).convert("RGB")
-        if self.transforms is not None:
-            img = self.transforms(img)
-        return img#, self.data[self.imgs[idx]]
-
-    def __len__(self):
-        return len(self.imgs)
 
 class DHDDataset(Dataset):
-    def __init__(self, name: ValueNode, path: ValueNode, **kwargs):
+    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, **kwargs):
         super().__init__()
         self.path = path
         self.name = name
         with open(os.path.join(self.path, 'dhd_coco.json')) as f:
             self.data = json.load(f)
         self.images = list(sorted(os.listdir(os.path.join(self.path, "Images"))))
+        self.transforms = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((image_size, image_size)),
+        ])
 
     def __len__(self) -> int:
         return len(self.images)
@@ -44,10 +32,17 @@ class DHDDataset(Dataset):
     def __getitem__(
         self, index
     ) -> Union[Dict[str, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
-        raise NotImplementedError
+        img_name = self.images[index]
+        img_path = os.path.join(self.path, "Images", img_name)
+        img = Image.open(img_path).convert("RGB")
+        img = self.transforms(img)
+        return {
+            "image": img,
+            "bbox": self.data[img_name]
+        }
 
     def __repr__(self) -> str:
-        return f"MyDataset({self.name=}, {self.path=})"
+        return f"DHDDataset({self.name=}, {self.path=})"
 
 
 @hydra.main(config_path=str(PROJECT_ROOT / "conf"), config_name="default")
@@ -55,6 +50,7 @@ def main(cfg: omegaconf.DictConfig):
     dataset: DHDDataset = hydra.utils.instantiate(
         cfg.data.datamodule.datasets.train, _recursive_=False
     )
+    print(dataset[0]['image'].shape)
 
 
 if __name__ == "__main__":

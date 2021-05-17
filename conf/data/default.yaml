@@ -1,26 +1,29 @@
 datamodule:
-  _target_: src.pl_data.datamodule.MyDataModule
+  _target_: src.pl_data.datamodule.ImageDataModule
 
   datasets:
     train:
       _target_: src.pl_data.dataset.DHDDataset
-      name: YourTrainDatasetName
-      path: ${oc.env:RAIN_DATASET_PATH}
+      name: DHDDataset
+      path: ${oc.env:TRAIN_DATASET_PATH}
+      image_size: 416
 
     val:
-      - _target_: src.pl_data.dataset.MyDataset
-        name: YourValDatasetName
+      - _target_: src.pl_data.dataset.DHDDataset
+        name: DHDDataset
         path: ${oc.env:VAL_DATASET_PATH}
+        image_size: 416
 
     test:
-      - _target_: src.pl_data.dataset.MyDataset
-        name: YourTestDatasetName
+      - _target_: src.pl_data.dataset.DHDDataset
+        name: DHDDataset
         path: ${oc.env:TEST_DATASET_PATH}
+        image_size: 416
 
   num_workers:
     train: 8
-    val: 4
-    test: 4
+    val: 8
+    test: 8
 
   batch_size:
     train: 32

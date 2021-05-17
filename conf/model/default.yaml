@@ -1,1 +1,3 @@
-_target_: src.pl_modules.model.MyModel
+_target_: src.pl_modules.model.PatchNet
+yolo_version: 'yolov4-tiny'
+patch_size: 100
