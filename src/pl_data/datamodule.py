@@ -101,9 +101,9 @@ class ImageDataModule(pl.LightningDataModule):
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}("
-            f"{self.datasets=}, "
-            f"{self.num_workers=}, "
-            f"{self.batch_size=})"
+            f"{self.datasets}, "
+            f"{self.num_workers}, "
+            f"{self.batch_size})"
         )
 
 

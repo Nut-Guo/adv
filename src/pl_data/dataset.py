@@ -42,7 +42,7 @@ class DHDDataset(Dataset):
         }
 
     def __repr__(self) -> str:
-        return f"DHDDataset({self.name=}, {self.path=})"
+        return f"DHDDataset({self.name}, {self.path})"
 
 
 @hydra.main(config_path=str(PROJECT_ROOT / "conf"), config_name="default")
