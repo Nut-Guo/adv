@@ -54,16 +54,16 @@ class PatchTransformer(nn.Module):
                 self.pad_size
             ),
             transforms.RandomAffine(
-                degrees=(-180, 180),
+                degrees=(-30, 30),
                 translate=(0.25, 0.25),
-                scale=(0.3, 1.3),
-                shear=[-1, 1, -1, 1]
+                scale=(0.8, 1.2),
+                # shear=[-1, 1, -1, 1]
             ),
-            # transforms.ColorJitter(
-            #     brightness=0.1,
-            #     contrast=0.1,
-            #     saturation=0.1
-            # ),
+            transforms.ColorJitter(
+                brightness=0.6,
+                # contrast=0.1,
+                # saturation=0.1
+            ),
         ])
         '''
         kernel = torch.cuda.FloatTensor([[0.003765, 0.015019, 0.023792, 0.015019, 0.003765],                                                                                    
