@@ -66,6 +66,7 @@ class PatchNet(pl.LightningModule):
         tv = self.total_variation(self.patch)
         tv_loss = tv * 2.5
         det_loss = torch.sum(torch.cat(pred)) if len(pred) > 0 else torch.tensor(0.1)
+        det_loss = torch.sum(torch.cat(pred)[0]) if len(pred) > 0 else torch.tensor(0.1)
         self.log('det_loss', det_loss)
         self.log('tv_loss', tv_loss)
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
@@ -73,11 +74,11 @@ class PatchNet(pl.LightningModule):
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         loss = self.step(batch, batch_idx)
-        patch = wandb.Image(self.patch.clone().detach())
+        # patch = wandb.Image(self.patch.clone().detach())
         self.log_dict(
             {
                 "train_loss": loss,
-                "patch": patch
+                # "patch": patch
             },
             on_step=True,
             on_epoch=True,
@@ -89,7 +90,7 @@ class PatchNet(pl.LightningModule):
         loss = self.step(batch, batch_idx)
         self.log_dict(
             {"val_loss": loss},
-            on_step=False,
+            on_step=True,
             on_epoch=True,
             prog_bar=True,
         )

@@ -13,7 +13,7 @@ pl_trainer:
   num_sanity_val_steps: 2
   gradient_clip_val: 10.0
 
-monitor_metric: 'train_loss_step'
+monitor_metric: 'val_loss_step'
 monitor_metric_mode: 'min'
 
 early_stopping:
