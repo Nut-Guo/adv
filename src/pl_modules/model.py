@@ -4,6 +4,7 @@ import hydra
 import omegaconf
 import pytorch_lightning as pl
 import torch
+from torch import nn
 import torchvision
 from omegaconf import DictConfig
 from torch.optim import Optimizer
@@ -25,8 +26,7 @@ class PatchNet(pl.LightningModule):
         self.patch_transformer = PatchTransformer(self.yolo_config.height, self.patch_size)
         self.pred_extractor = PredExtractor('person')
         self.total_variation = TotalVariation()
-        self.patch = nn.Parameter(self.generate_patch(init_patch))
-        self.patch.requires_grad = True
+        self.patch = self.generate_patch(init_patch)
         self.register_parameter(name='patch', param=self.patch)
         self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
 
@@ -38,9 +38,9 @@ class PatchNet(pl.LightningModule):
         :return:
         """
         if patch_type == 'gray':
-            adv_patch = torch.full((3, self.patch_size, self.patch_size), 0.5)
+            adv_patch = nn.Parameter(torch.full((3, self.patch_size, self.patch_size), 0.5), requires_grad=True)
         elif patch_type == 'random':
-            adv_patch = torch.rand((3, self.patch_size, self.patch_size))
+            adv_patch = nn.Parameter(torch.rand((3, self.patch_size, self.patch_size)), requires_grad=True)
 
         return adv_patch
 
