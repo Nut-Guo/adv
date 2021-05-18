@@ -70,7 +70,7 @@ class PatchNet(pl.LightningModule):
         self.log('det_loss', det_loss)
         self.log('tv_loss', tv_loss)
         trans = transforms.ToTensor()
-        self.log('patched_img', Image(image_batch[0].clone().detach()), on_step=True,
+        self.log('patched_img', trans(image_batch[0].clone().detach()), on_step=True,
                  reduce_fx=lambda x: x[-1])
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
         return loss
