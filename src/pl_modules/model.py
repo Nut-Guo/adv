@@ -77,8 +77,7 @@ class PatchNet(pl.LightningModule):
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         loss = self.step(batch, batch_idx)
         patch = wandb.Image(self.patch.clone().detach())
-        trans = transforms.ToTensor()
-        self.log('patch', patch, on_step=True, reduce_fx=lambda x: x[-1], on_epoch=True)
+        self.log('patch', patch, on_step=True, reduce_fx=lambda x: x[-1])
         self.log_dict(
             {
                 "train_loss": loss,
