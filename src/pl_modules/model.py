@@ -89,7 +89,7 @@ class PatchNet(pl.LightningModule):
         loss = self.step(batch, batch_idx)
         self.log_dict(
             {"val_loss": loss},
-            on_step=False,
+            on_step=True,
             on_epoch=True,
             prog_bar=True,
         )
