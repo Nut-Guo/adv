@@ -1,7 +1,7 @@
 import os
 import requests
 import logging
-import tqdm as tq
+from tqdm import tqdm as tq
 import zipfile
 import tarfile
 
