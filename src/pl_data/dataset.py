@@ -63,7 +63,6 @@ class PersonDataset(object):
             img = self.transforms(img)
         return {
             "image": img,
-            "bbox": None
         }
 
     def __len__(self):
