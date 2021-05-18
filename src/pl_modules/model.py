@@ -87,9 +87,10 @@ class PatchNet(pl.LightningModule):
 
     def validation_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         loss = self.step(batch, batch_idx)
+        self.log("val_loss", loss)
         self.log_dict(
             {"val_loss": loss},
-            on_step=True,
+            on_step=False,
             on_epoch=True,
             prog_bar=True,
         )
