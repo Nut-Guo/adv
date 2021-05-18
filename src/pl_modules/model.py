@@ -67,8 +67,14 @@ class PatchNet(pl.LightningModule):
         tv = self.total_variation(self.patch)
         tv_loss = tv
         det_loss = torch.mean(torch.cat(pred)) if len(pred) > 0 else torch.tensor(0.1)
-        self.log('det_loss', det_loss)
-        self.log('tv_loss', tv_loss)
+        self.log_dict(
+            {
+                'det_loss':det_loss,
+                'tv_loss': tv_loss,
+            }
+        )
+        # self.log('det_loss', det_loss)
+        # self.log('tv_loss', tv_loss)
         self.log('patched_img', wandb.Image(image_batch[0].clone().detach()), on_step=True,
                  reduce_fx=lambda x: x[-1])
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
