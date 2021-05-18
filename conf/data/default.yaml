@@ -3,20 +3,20 @@ datamodule:
 
   datasets:
     train:
-      _target_: src.pl_data.dataset.DHDDataset
-      name: DHDDataset
+      _target_: src.pl_data.dataset.PersonDataset
+      name: PersonDataset
       path: ${oc.env:TRAIN_DATASET_PATH}
       image_size: 416
 
     val:
-      - _target_: src.pl_data.dataset.DHDDataset
-        name: DHDDataset
+      - _target_: src.pl_data.dataset.PersonDataset
+        name: PersonDataset
         path: ${oc.env:VAL_DATASET_PATH}
         image_size: 416
 
     test:
-      - _target_: src.pl_data.dataset.DHDDataset
-        name: DHDDataset
+      - _target_: src.pl_data.dataset.PersonDataset
+        name: PersonDataset
         path: ${oc.env:TEST_DATASET_PATH}
         image_size: 416
 

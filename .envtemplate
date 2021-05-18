@@ -1,5 +1,5 @@
-export TRAIN_DATASET_PATH="/content/adv/data/DHD"
-export VAL_DATASET_PATH="/content/adv/data/DHD"
-export TEST_DATASET_PATH="/content/adv/data/DHD"
+export TRAIN_DATASET_PATH="/content/adv/data/LIP"
+export VAL_DATASET_PATH="/content/adv/data/LIP"
+export TEST_DATASET_PATH="/content/adv/data/LIP"
 export PROJECT_ROOT=/content/adv
 export MODEL_PATH="/content/adv/model"

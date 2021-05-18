@@ -45,6 +45,34 @@ class DHDDataset(Dataset):
         return f"DHDDataset({self.name}, {self.path})"
 
 
+class PersonDataset(object):
+    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, **kwargs):
+        super().__init__()
+        self.path = path
+        self.name = name
+        self.imgs = list(sorted(os.listdir(os.path.join(path, "Images/train_images"))))
+        self.transforms = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((image_size, image_size)),
+        ])
+
+    def __getitem__(self, idx):
+        img_path = os.path.join(self.path, "Images/train_images", self.imgs[idx])
+        img = Image.open(img_path).convert("RGB")
+        if self.transforms is not None:
+            img = self.transforms(img)
+        return {
+            "image": img,
+            "bbox": None
+        }
+
+    def __len__(self):
+        return len(self.imgs)
+
+    def __repr__(self) -> str:
+        return f"PersonDataset({self.name}, {self.path})"
+
+
 @hydra.main(config_path=str(PROJECT_ROOT / "conf"), config_name="default")
 def main(cfg: omegaconf.DictConfig):
     dataset: DHDDataset = hydra.utils.instantiate(
