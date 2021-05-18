@@ -10,6 +10,7 @@ from torch.optim import Optimizer
 from src.common.utils import PROJECT_ROOT
 from src.pl_modules.yolo import *
 from src.pl_modules.patch import *
+import wandb
 import matplotlib.pyplot as plt
 # from src.pl_modules.median_pool import *
 
@@ -72,8 +73,12 @@ class PatchNet(pl.LightningModule):
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         loss = self.step(batch, batch_idx)
+        patch = wandb.Image(self.patch.clone().detach())
         self.log_dict(
-            {"train_loss": loss},
+            {
+                "train_loss": loss,
+                "patch": patch
+            },
             on_step=True,
             on_epoch=True,
             prog_bar=True,
