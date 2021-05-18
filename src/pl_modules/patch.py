@@ -217,12 +217,9 @@ class PatchApplier(nn.Module):
         # advs = torch.unbind(adv_batch, 1)
         # for adv in advs:
         #     img_batch = torch.where((adv == 0), img_batch, adv)
-
-        # for img in img_batch:
-        adv_batch = adv_batch.unsqueeze(0).expand(img_batch.shape[0], -1, -1, -1)
         print(img_batch.size(), adv_batch.size())
-        # img_batch = torch.where((adv_batch == 0), img_batch, adv_batch)
-        img_batch[adv_batch != 0] = adv_batch[adv_batch != 0]
+        img_batch = torch.where((adv_batch == 0), img_batch, adv_batch)
+        print(img_batch.size())
         return img_batch
 
 
