@@ -53,12 +53,12 @@ class PatchTransformer(nn.Module):
             transforms.Pad(
                 self.pad_size
             ),
-            # transforms.RandomAffine(
-            #     degrees=(-180, 180),
-            #     translate=(0.25, 0.25),
-            #     scale=(0.3, 3),
-            #     shear=[-1, 1, -1, 1]
-            # ),
+            transforms.RandomAffine(
+                degrees=(-180, 180),
+                translate=(0.25, 0.25),
+                scale=(0.3, 3),
+                shear=[-1, 1, -1, 1]
+            ),
             # transforms.ColorJitter(
             #     brightness=1,
             #     contrast=1,
@@ -214,12 +214,7 @@ class PatchApplier(nn.Module):
         super(PatchApplier, self).__init__()
 
     def forward(self, img_batch, adv_batch):
-        # advs = torch.unbind(adv_batch, 1)
-        # for adv in advs:
-        #     img_batch = torch.where((adv == 0), img_batch, adv)
-        print(img_batch.size(), adv_batch.size())
         img_batch = torch.where((adv_batch == 0), img_batch, adv_batch)
-        print(img_batch.size())
         return img_batch
 
 
