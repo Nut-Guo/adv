@@ -46,7 +46,7 @@ class DHDDataset(Dataset):
 
 
 class PersonDataset(object):
-    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, **kwargs):
+    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode,**kwargs):
         super().__init__()
         self.path = path
         self.name = name

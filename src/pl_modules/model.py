@@ -44,6 +44,10 @@ class PatchNet(pl.LightningModule):
 
         return adv_patch
 
+    def get_patch(self):
+        trans = transforms.ToPILImage()
+        return trans(self.patch.clone().detach())
+
     def forward(self, img_batch, **kwargs) -> Dict[str, torch.Tensor]:
         """
         Method for the forward pass.
