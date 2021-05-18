@@ -69,7 +69,7 @@ class PatchNet(pl.LightningModule):
         det_loss = torch.mean(torch.cat(pred)) if len(pred) > 0 else torch.tensor(0.1)
         self.log_dict(
             {
-                'det_loss':det_loss,
+                'det_loss': det_loss,
                 'tv_loss': tv_loss,
             }
         )

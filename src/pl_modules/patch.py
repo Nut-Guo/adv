@@ -21,9 +21,9 @@ class TotalVariation(nn.Module):
 
     def forward(self, adv_patch):
         # bereken de total variation van de adv_patch
-        tvcomp1 = torch.abs(adv_patch[:, :, 1:] - adv_patch[:, :, :-1] + 0.000001)
+        tvcomp1 = torch.square(adv_patch[:, :, 1:] - adv_patch[:, :, :-1] + 0.000001)
         # tvcomp1 = torch.sum(torch.sum(tvcomp1, 0), 0)
-        tvcomp2 = torch.abs(adv_patch[:, 1:, :] - adv_patch[:, :-1, :] + 0.000001)
+        tvcomp2 = torch.square(adv_patch[:, 1:, :] - adv_patch[:, :-1, :] + 0.000001)
         # tvcomp2 = torch.sum(torch.sum(tvcomp2, 0), 0)
         tv = tvcomp1.sum() + tvcomp2.sum()
         return tv / torch.numel(adv_patch)
