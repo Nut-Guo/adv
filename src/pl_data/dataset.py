@@ -50,14 +50,14 @@ class PersonDataset(object):
         super().__init__()
         self.path = path
         self.name = name
-        self.imgs = list(sorted(os.listdir(os.path.join(path, "Images/train_images"))))
+        self.imgs = list(sorted(os.listdir(self.path)))
         self.transforms = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((image_size, image_size)),
         ])
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.path, "Images/train_images", self.imgs[idx])
+        img_path = os.path.join(self.path, self.imgs[idx])
         img = Image.open(img_path).convert("RGB")
         if self.transforms is not None:
             img = self.transforms(img)
