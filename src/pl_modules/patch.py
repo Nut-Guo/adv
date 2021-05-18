@@ -59,11 +59,11 @@ class PatchTransformer(nn.Module):
                 scale=(0.3, 1.3),
                 shear=[-1, 1, -1, 1]
             ),
-            # transforms.ColorJitter(
-            #     brightness=1,
-            #     contrast=1,
-            #     saturation=1
-            # ),
+            transforms.ColorJitter(
+                brightness=0.1,
+                contrast=0.1,
+                saturation=0.1
+            ),
         ])
         '''
         kernel = torch.cuda.FloatTensor([[0.003765, 0.015019, 0.023792, 0.015019, 0.003765],                                                                                    
