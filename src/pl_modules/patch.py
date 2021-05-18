@@ -56,7 +56,7 @@ class PatchTransformer(nn.Module):
             transforms.RandomAffine(
                 degrees=(-180, 180),
                 translate=(0.25, 0.25),
-                scale=(0.3, 3),
+                scale=(0.3, 1.3),
                 shear=[-1, 1, -1, 1]
             ),
             # transforms.ColorJitter(
