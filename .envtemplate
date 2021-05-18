@@ -1,5 +1,5 @@
-export TRAIN_DATASET_PATH=PROJECT_ROOT"/data/DHD"
-export VAL_DATASET_PATH=PROJECT_ROOT"/data/DHD"
-export TEST_DATASET_PATH=PROJECT_ROOT"/data/DHD"
-export PROJECT_ROOT=$(pwd)
-export MODEL_PATH=PROJECT_ROOT"model"
+export TRAIN_DATASET_PATH="/content/adv/data/DHD"
+export VAL_DATASET_PATH="/content/adv/data/DHD"
+export TEST_DATASET_PATH="/content/adv/data/DHD"
+export PROJECT_ROOT=/content/adv
+export MODEL_PATH="/content/adv/model"
