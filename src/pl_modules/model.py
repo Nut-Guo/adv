@@ -66,7 +66,7 @@ class PatchNet(pl.LightningModule):
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
         tv_loss = tv
-        det_loss = torch.sum(torch.cat(pred)) if len(pred) > 0 else torch.tensor(0.1)
+        det_loss = torch.mean(torch.cat(pred)) if len(pred) > 0 else torch.tensor(0.1)
         self.log('det_loss', det_loss)
         self.log('tv_loss', tv_loss)
         trans = transforms.ToTensor()
