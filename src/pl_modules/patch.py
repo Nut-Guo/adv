@@ -25,7 +25,7 @@ class TotalVariation(nn.Module):
         # tvcomp1 = torch.sum(torch.sum(tvcomp1, 0), 0)
         tvcomp2 = torch.square(adv_patch[:, 1:, :] - adv_patch[:, :-1, :] + 0.000001)
         # tvcomp2 = torch.sum(torch.sum(tvcomp2, 0), 0)
-        tv = tvcomp1.sum() + tvcomp2.sum()
+        tv = torch.sum(torch.sqrt(tvcomp1 + tvcomp2))
         return tv / torch.numel(adv_patch)
 
 
