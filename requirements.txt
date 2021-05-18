@@ -13,4 +13,4 @@ python-dotenv
 matplotlib
 stqdm
 
-git+https://github.com/groke-technologies/pytorch-lightning-bolts.git@yolo --upgrade
+git+https://github.com/groke-technologies/pytorch-lightning-bolts.git@yolo
