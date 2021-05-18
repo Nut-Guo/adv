@@ -4,6 +4,7 @@ import hydra
 import omegaconf
 import pytorch_lightning as pl
 import torch
+import torchvision
 from omegaconf import DictConfig
 from torch.optim import Optimizer
 
@@ -70,7 +71,7 @@ class PatchNet(pl.LightningModule):
         self.log('tv_loss', tv_loss)
         trans = transforms.ToTensor()
         self.log('patched_img', wandb.Image(image_batch[0].clone().detach()), on_step=True,
-                 reduce_fx=lambda x: wandb.Image(torch.utils.make_grid([trans(i) for i in x])))
+                 reduce_fx=lambda x: wandb.Image(torchvision.utils.make_grid([trans(i) for i in x])))
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
         return loss
 
@@ -78,7 +79,7 @@ class PatchNet(pl.LightningModule):
         loss = self.step(batch, batch_idx)
         patch = wandb.Image(self.patch.clone().detach())
         trans = transforms.ToTensor()
-        self.log('patch', patch, on_step=True, reduce_fx=lambda x: wandb.Image(torch.utils.make_grid([trans(i) for i in x])))
+        self.log('patch', patch, on_step=True, reduce_fx=lambda x: wandb.Image(torchvision.utils.make_grid([trans(i) for i in x])))
         self.log_dict(
             {
                 "train_loss": loss,
