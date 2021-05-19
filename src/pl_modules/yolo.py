@@ -197,7 +197,6 @@ def main():
             result = model.infer(img)
             if not NAME2ID['person'] in result[2]:
                 f.write(name + '\n')
-                print(result[2])
             else:
                 mask = result[2] == NAME2ID['person']
                 new_res = {
