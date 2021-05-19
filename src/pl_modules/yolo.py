@@ -185,8 +185,8 @@ def main():
     from PIL import Image
     import json
     base_path = "/content/drive/MyDrive/datasets"
-    json_file = open(os.path.join(base_path, "annotations.json"), "w")
-    with open(os.path.join(base_path, "blacklist.txt"), "w") as f:
+    json_file = open(os.path.join(base_path, "LIP_annotations.json"), "w")
+    with open(os.path.join(base_path, "LIP_blacklist.txt"), "w") as f:
         for name in names:
             img = Image.open(os.path.join(path, name))
             img = trans(img).cuda()
