@@ -38,7 +38,8 @@ class PatchTransformer(nn.Module):
 
     """
 
-    def __init__(self, image_size, patch_size):
+    def __init__(self, image_size, patch_size, degrees=None, translate=None, scale=None, brightness=None, contrast=None,
+                 saturation=None):
         super(PatchTransformer, self).__init__()
         # self.min_contrast = 0.8
         # self.max_contrast = 1.2
@@ -54,15 +55,15 @@ class PatchTransformer(nn.Module):
                 self.pad_size
             ),
             transforms.RandomAffine(
-                degrees=(-30, 30),
-                translate=(0.25, 0.25),
-                scale=(0.8, 1.2),
+                degrees=degrees,
+                translate=translate,
+                scale=scale,
                 # shear=[-1, 1, -1, 1]
             ),
             transforms.ColorJitter(
-                brightness=0.6,
-                # contrast=0.1,
-                # saturation=0.1
+                brightness=brightness,
+                contrast=contrast,
+                saturation=saturation
             ),
         ])
         '''
