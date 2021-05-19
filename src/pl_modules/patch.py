@@ -38,8 +38,8 @@ class PatchTransformer(nn.Module):
 
     """
 
-    def __init__(self, image_size, patch_size, degrees=None, translate=None, scale=None, brightness=0, contrast=0,
-                 saturation=0):
+    def __init__(self, image_size, patch_size, degrees=None, translate=None, scale=None, brightness=None, contrast=None,
+                 saturation=None, hue=None):
         super(PatchTransformer, self).__init__()
         # self.min_contrast = 0.8
         # self.max_contrast = 1.2
@@ -63,7 +63,8 @@ class PatchTransformer(nn.Module):
             transforms.ColorJitter(
                 brightness=brightness,
                 contrast=contrast,
-                saturation=saturation
+                saturation=saturation,
+                hue=hue
             ),
         ])
         '''
