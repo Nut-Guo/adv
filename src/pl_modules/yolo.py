@@ -189,6 +189,7 @@ def main():
             result = model.infer(img)
             if not NAME2ID['person'] in result[2]:
                 f.write(name + '\n')
+                print(result[2])
 
 
 if __name__ == "__main__":
