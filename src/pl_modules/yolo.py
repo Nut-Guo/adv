@@ -186,6 +186,9 @@ def main():
         for name in names:
             img = Image.open(os.path.join(path, name))
             img = trans(img)
+            if img.dims(1) != 3:
+                f.write(name + '\n')
+                print(img.dims)
             result = model.infer(img)
             if not NAME2ID['person'] in result[2]:
                 f.write(name + '\n')
