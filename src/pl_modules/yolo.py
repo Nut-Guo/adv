@@ -192,7 +192,6 @@ def main():
             img = trans(img).cuda()
             if img.shape[0] != 3:
                 f.write(name + '\n')
-                print(img.shape)
                 continue
             result = model.infer(img)
             if not NAME2ID['person'] in result[2]:
