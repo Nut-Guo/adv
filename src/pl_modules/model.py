@@ -66,7 +66,7 @@ class PatchNet(pl.LightningModule):
         # self.patch.data = self.patch.data.clamp(0.001, 0.999)
         adv_batch = self.patch_transformer(self.patch)
         image_batch = self.patch_applier(image_batch, adv_batch)
-        image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
+        # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         # with torch.no_grad():
         self.yolo.eval()
         detections = self.yolo(image_batch)
