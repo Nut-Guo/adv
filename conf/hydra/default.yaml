@@ -1,5 +1,5 @@
 run:
-  dir: .cache/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  dir: /content/drive/MyDrive/checkpoints/${now:%Y-%m-%d}/${now:%H-%M-%S}
 
 sweep:
   dir: .cache/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}/
