@@ -179,10 +179,13 @@ def main():
     from src.pl_data.dataset import PersonDataset
     path = '/content/adv/data/LIP/Images/train_images'
     names = list(sorted(os.listdir(path)))
+    from torchvision import transforms
+    trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((416, 416))])
     from PIL import Image
     with open("blacklist.txt", "a") as f:
         for name in names:
             img = Image.open(os.path.join(path, name))
+            img = trans(img)
             result = model.infer(img)
             if not NAME2ID['person'] in result['labels']:
                 f.write(name + '\n')
