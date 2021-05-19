@@ -3,7 +3,7 @@ torch==1.8.1
 torchvision==0.9.1
 pytorch-lightning==1.2.5
 hydra-core==1.1.0.dev5
-# wandb==0.10.23
+wandb==0.10.30
 streamlit==0.79.0
 # hydra-joblib-launcher
 
@@ -14,4 +14,3 @@ matplotlib
 stqdm
 
 git+https://github.com/groke-technologies/pytorch-lightning-bolts.git@yolo
-git+git://github.com/wandb/client.git@bug/issue-1122-2#egg=wandb

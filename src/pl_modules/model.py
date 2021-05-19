@@ -30,6 +30,7 @@ class PatchNet(pl.LightningModule):
         self.log_interval = log_interval
         self.patch = self.generate_patch(init_patch)
         self.register_parameter(name='patch', param=self.patch)
+        self.logger.experiment.watch()
         self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
 
     def generate_patch(self, patch_type):
