@@ -73,7 +73,7 @@ class PatchNet(pl.LightningModule):
         if batch_idx % self.log_interval == 0:
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
-                'adv_patch': wandb.Image(adv_batch.clone().detach()),
+                'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
                 'patched_img': wandb.Image(image_batch[0].clone().detach())
             })
         self.yolo.eval()
