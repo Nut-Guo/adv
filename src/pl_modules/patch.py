@@ -90,10 +90,8 @@ class PatchTransformer(nn.Module):
         x2 = midx + size//2
         y1 = midy - size//2
         y2 = midy + size//2
-        try:
-            base[:, x1:x2, y1:y2] = patch
-        except:
-            print(x1, x2, y1, y2)
+        print(x1, x2, y1, y2)
+        base[:, x1:x2, y1:y2] = patch
         return base
 
     def forward(self, adv_patch, ground_truth):
