@@ -177,15 +177,18 @@ def main():
     prepare_files('yolov4-tiny')
     model, config = get_yolo('yolov4-tiny')
     from src.pl_data.dataset import PersonDataset
+    model = model.cuda()
     path = '/content/adv/data/LIP/Images/train_images'
     names = list(sorted(os.listdir(path)))
     from torchvision import transforms
     trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((416, 416))])
     from PIL import Image
+    import json
+    annotations = {}
     with open("blacklist.txt", "a") as f:
         for name in names:
             img = Image.open(os.path.join(path, name))
-            img = trans(img)
+            img = trans(img).cuda()
             if img.shape[0] != 3:
                 f.write(name + '\n')
                 print(img.shape)
@@ -194,6 +197,12 @@ def main():
             if not NAME2ID['person'] in result[2]:
                 f.write(name + '\n')
                 print(result[2])
+            else:
+                mask = result[2] == NAME2ID['person']
+                new_res = {"boxes": result[0][mask], "confidence": result[1][mask]}
+                annotations[name] = new_res
+    with open("annotations.json") as f:
+        json.dump(annotations, f)
 
 
 if __name__ == "__main__":
