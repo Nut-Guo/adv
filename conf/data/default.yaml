@@ -7,14 +7,14 @@ datamodule:
       name: PersonDataset
       path: ${oc.env:TRAIN_DATASET_PATH}
       image_size: 416
-      max_size: 10000
+      max_size: 100
 
     val:
       - _target_: src.pl_data.dataset.PersonDataset
         name: PersonDataset
         path: ${oc.env:VAL_DATASET_PATH}
         image_size: 416
-        max_size: 1000
+        max_size: 100
 
     test:
       - _target_: src.pl_data.dataset.PersonDataset
