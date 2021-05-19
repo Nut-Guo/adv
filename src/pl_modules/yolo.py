@@ -184,7 +184,7 @@ def main():
     trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((416, 416))])
     from PIL import Image
     import json
-    annotations = {}
+    json_file = open("annotations.json", "a")
     with open("blacklist.txt", "a") as f:
         for name in names:
             img = Image.open(os.path.join(path, name))
@@ -199,10 +199,10 @@ def main():
                 print(result[2])
             else:
                 mask = result[2] == NAME2ID['person']
-                new_res = {"boxes": result[0][mask].cpu(), "confidence": result[1][mask].cpu()}
-                annotations[name] = new_res
-    with open("annotations.json") as f:
-        json.dump(annotations, f)
+                new_res = {name: {"boxes": result[0][mask].cpu(), "confidence": result[1][mask].cpu()}}
+                # annotations[name] = new_res
+                json.dump(new_res, json_file)
+
 
 
 if __name__ == "__main__":
