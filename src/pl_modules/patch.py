@@ -84,8 +84,8 @@ class PatchTransformer(nn.Module):
         size = int((min(box[2] - box[0], box[3]-box[1]) // 2) * 2 * self.portion)
         trans = transforms.Resize((size, size))
         patch = trans(patch)
-        midx = (box[3] - box[1]) // 2
-        midy = (box[2] - box[0]) // 2
+        midx = (box[2] - box[0])//2
+        midy = (box[3] - box[1])//2
         x1 = midx - size//2
         y1 = midy - size//2
         try:
