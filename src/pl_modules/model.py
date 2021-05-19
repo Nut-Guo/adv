@@ -65,6 +65,8 @@ class PatchNet(pl.LightningModule):
         image_batch = batch['image']
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
+            # gt = self.yolo(image_batch)
+            # gt_pred = self.pred_extractor(gt)
         adv_batch = self.patch_transformer(self.patch)
         image_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
@@ -77,7 +79,7 @@ class PatchNet(pl.LightningModule):
             })
         self.yolo.eval()
         detections = self.yolo(image_batch)
-        pred = self.pred_extractor(detections)
+        pred = self.pred_extractor(detections)['classprobs']
         tv = self.total_variation(self.patch)
         tv_loss = tv * self.alpha
         det_loss = torch.sum(-torch.log(1 - (torch.cat(pred)))) if len(pred) > 0 else torch.tensor(0.1)
