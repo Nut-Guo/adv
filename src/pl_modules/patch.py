@@ -41,14 +41,6 @@ class PatchTransformer(nn.Module):
     def __init__(self, image_size, patch_size, degrees=None, translate=None, scale=None, brightness=None, contrast=None,
                  saturation=None, hue=None):
         super(PatchTransformer, self).__init__()
-        # self.min_contrast = 0.8
-        # self.max_contrast = 1.2
-        # self.min_brightness = -0.1
-        # self.max_brightness = 0.1
-        # self.noise_factor = 0.10
-        # self.minangle = -20 / 180 * math.pi
-        # self.maxangle = 20 / 180 * math.pi
-        # self.medianpooler = MedianPool2d(7, same=True)
         self.pad_size = (image_size - patch_size) // 2
         self.transforms = transforms.Compose([
             transforms.Pad(
