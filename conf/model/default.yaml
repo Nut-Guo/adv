@@ -1,7 +1,7 @@
 _target_: src.pl_modules.model.PatchNet
 yolo_version: 'yolov4-tiny'
 patch_size: 400
-alpha: 0.1
+alpha: 1
 init_patch: 'gray'
 log_interval: 100
 patch_transforms:
