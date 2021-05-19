@@ -246,6 +246,7 @@ class PatchApplier(nn.Module):
 
     @staticmethod
     def forward(img_batch, adv_batch):
+        assert(img_batch.shape == adv_batch.shape)
         img_batch = torch.where((adv_batch == 0), img_batch, adv_batch)
         return img_batch
 
