@@ -187,6 +187,7 @@ def main():
             img = Image.open(os.path.join(path, name))
             img = trans(img)
             result = model.infer(img)
+            print(result)
             if not NAME2ID['person'] in result['labels']:
                 f.write(name + '\n')
 
