@@ -16,3 +16,5 @@ patch_transforms:
     - 1.2
   brightness:
     0.2
+  portion:
+    0.5
