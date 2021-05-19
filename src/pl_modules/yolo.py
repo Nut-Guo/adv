@@ -184,8 +184,9 @@ def main():
     trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((416, 416))])
     from PIL import Image
     import json
-    json_file = open("annotations.json", "w")
-    with open("blacklist.txt", "w") as f:
+    base_path = "/content/drive/MyDrive/datasets"
+    json_file = open(os.path.join(base_path, "annotations.json"), "w")
+    with open(os.path.join(base_path, "blacklist.txt"), "w") as f:
         for name in names:
             img = Image.open(os.path.join(path, name))
             img = trans(img).cuda()
