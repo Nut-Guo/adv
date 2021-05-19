@@ -15,8 +15,4 @@ patch_transforms:
     - 0.8
     - 1.2
   brightness:
-    0.8
-  contrast:
-    0
-  saturation:
-    0
+    0.2
