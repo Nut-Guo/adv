@@ -79,7 +79,7 @@ class PatchNet(pl.LightningModule):
             }
         )
         patch = wandb.Image(self.patch.clone().detach())
-        self.logger.experiment().log({
+        self.logger.experiment.log({
             'patch': patch,
             'patched_img': image_batch[0].clone().detach()
         })
