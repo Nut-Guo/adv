@@ -80,8 +80,8 @@ class PatchNet(pl.LightningModule):
         )
         patch = wandb.Image(self.patch.clone().detach())
         self.logger.experiment.log({
-            'patch': patch,
-            'patched_img': image_batch[0].clone().detach()
+            'patch': patch.clone().detach().cpu(),
+            'patched_img': image_batch[0].clone().detach().cpu()
         })
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
         return loss
