@@ -20,6 +20,6 @@ early_stopping:
   patience: 42
   verbose: False
 
-model_checkpoints:
-  save_top_k: 2
-  verbose: False
+#model_checkpoints:
+#  save_top_k: 2
+#  verbose: False
