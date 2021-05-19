@@ -94,6 +94,7 @@ class PatchTransformer(nn.Module):
             base[:, x1:x2, y1:y2] = patch
         except:
             print(x1, x2, y1, y2)
+            print(size)
         return base
 
     def forward(self, adv_patch, ground_truth):
