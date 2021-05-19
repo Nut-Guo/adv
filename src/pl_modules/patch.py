@@ -78,8 +78,8 @@ class PatchTransformer(nn.Module):
         return result
 
     def placeinto_box(self, patch, box, base):
-        size = min(box[2] - box[0], box[3]-box[1])
-        trans = transforms.Resize(int(size.item() * self.portion))
+        size = min(box[2] - box[0], box[3]-box[1]).item()
+        trans = transforms.Resize(int(size * self.portion))
         patch = trans(patch)
         midx = box[2] - box[0]
         midy = box[3] - box[1]
