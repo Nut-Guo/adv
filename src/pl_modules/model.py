@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 
 class PatchNet(pl.LightningModule):
-    def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, *args, **kwargs) -> None:
+    def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, log_interval=100, *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
         self.patch_size = patch_size
@@ -27,6 +27,7 @@ class PatchNet(pl.LightningModule):
         self.patch_transformer = PatchTransformer(self.yolo_config.height, self.patch_size)
         self.pred_extractor = PredExtractor('person')
         self.total_variation = TotalVariation()
+        self.log_interval = log_interval
         self.patch = self.generate_patch(init_patch)
         self.register_parameter(name='patch', param=self.patch)
         self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
@@ -79,7 +80,7 @@ class PatchNet(pl.LightningModule):
                 'tv_loss': tv_loss,
             }
         )
-        if batch_idx % 10 == 9:
+        if batch_idx % self.log_interval == 0:
             patch = wandb.Image(self.patch.clone().detach())
             self.logger.experiment.log({
                 'patch': patch,
