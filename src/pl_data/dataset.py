@@ -46,11 +46,13 @@ class DHDDataset(Dataset):
 
 
 class PersonDataset(object):
-    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode,**kwargs):
+    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode=None,**kwargs):
         super().__init__()
         self.path = path
         self.name = name
         self.imgs = list(sorted(os.listdir(self.path)))
+        if max_size:
+            self.imgs = self.imgs[:max_size]
         self.transforms = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((image_size, image_size)),
