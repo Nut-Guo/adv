@@ -14,3 +14,4 @@ matplotlib
 stqdm
 
 git+https://github.com/groke-technologies/pytorch-lightning-bolts.git@yolo
+git+git://github.com/wandb/client.git@bug/issue-1122-2#egg=wandb
