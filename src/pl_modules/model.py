@@ -86,7 +86,6 @@ class PatchNet(pl.LightningModule):
             pred['classprobs']) > 0 else torch.tensor(0.1)
         self.log_dict(
             {
-                'confidence': pred['classprobs'][0][0],
                 'det_loss': det_loss,
                 'tv_loss': tv_loss,
             }

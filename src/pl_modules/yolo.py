@@ -175,6 +175,17 @@ class PredExtractor(nn.Module):
 def main():
     # get_names()
     prepare_files('yolov4-tiny')
+    model, config = get_yolo('yolov4-tiny')
+    from src.pl_data.dataset import PersonDataset
+    path = '/content/adv/data/LIP/Images/train_images'
+    names = list(sorted(os.listdir(path)))
+    from PIL import Image
+    with open("blacklist.txt", "a") as f:
+        for name in names:
+            img = Image.open(os.path.join(path, name))
+            result = model.infer(img)
+            if not NAME2ID['person'] in result['labels']:
+                f.write(name + '\n')
 
 
 if __name__ == "__main__":
