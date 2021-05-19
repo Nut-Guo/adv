@@ -186,8 +186,9 @@ def main():
     import json
     base_path = "/content/drive/MyDrive/datasets"
     json_file = open(os.path.join(base_path, "LIP_annotations.json"), "w")
+    from tqdm import tqdm
     with open(os.path.join(base_path, "LIP_blacklist.txt"), "w") as f:
-        for name in names:
+        for name in tqdm(names):
             img = Image.open(os.path.join(path, name))
             img = trans(img).cuda()
             if img.shape[0] != 3:
