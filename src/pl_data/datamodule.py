@@ -113,6 +113,9 @@ def main(cfg: omegaconf.DictConfig):
         cfg.data.datamodule, _recursive_=False
     )
     print(datamodule)
+    train_loader = datamodule.train_dataloader()
+    img = next(iter(train_loader))
+    print(img)
 
 
 if __name__ == "__main__":
