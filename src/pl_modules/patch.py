@@ -109,7 +109,8 @@ class PatchTransformer(nn.Module):
             for box in boxes:
                 base = self.placeinto_box(adv_patch, box, base)
             adv_batch.append(base)
-        return torch.stack(adv_batch)
+        adv_batch = self.transforms(torch.stack(adv_batch))
+        return adv_batch
         # return self.transforms(adv_patch)
     # def forward(self, adv_patch, lab_batch, img_size, do_rotate=True, rand_loc=True):
     #     # adv_patch = F.conv2d(adv_patch.unsqueeze(0),self.kernel,padding=(2,2))
