@@ -88,7 +88,11 @@ class PatchTransformer(nn.Module):
         midy = (box[3] - box[1])//2
         x1 = midx - size//2
         y1 = midy - size//2
-        base[:, x1:x1 + size, y1: y1 + size] = patch
+        try:
+            base[:, x1:x1 + size, y1: y1 + size] =
+        except RuntimeError:
+            print(x1, y1)
+            print(box)
         return base
 
     def forward(self, adv_patch, ground_truth):
