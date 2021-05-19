@@ -78,7 +78,7 @@ class PatchNet(pl.LightningModule):
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
                 'patched_img': wandb.Image(
-                    torchvision.utils.draw_bounding_boxes((image_batch[0] * 255).clone().detach().clamp(0, 255).cpu().byte(),
+                    torchvision.utils.draw_bounding_boxes((image_batch[0] * 255).clone().detach().clamp(0, 255).cpu().type(torch.uint8),
                                                           gt_output['boxes'][0],
                                                           width=4))
             })
