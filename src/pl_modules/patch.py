@@ -210,6 +210,7 @@ class PatchApplier(nn.Module):
     def forward(self, img_batch, adv_batch):
         img_batch = torch.where((adv_batch == 0), img_batch,
                                 adv_batch.unsqueeze(0).expand(img_batch.shape[0], -1, -1, -1))
+        # print(adv_batch)
         # adv_batch = adv_batch.unsqueeze(0).expand(img_batch.shape[0], -1, -1, -1)
         # img_batch[adv_batch != 0] = adv_batch[adv_batch != 0]
         return img_batch
@@ -236,3 +237,19 @@ class PatchGenerator(nn.Module):
     def forward(self, *input):
         pass
 '''
+
+
+def main():
+    patch = torch.rand((3, 100, 100))
+    trans = PatchTransformer(416, 100, (-30, 30), (0.25, 0.25), (0.8, 1.2))
+    app = PatchApplier()
+    img = torch.ones((3, 3, 416, 416))
+    patch = trans(patch)
+    img = app(img, patch)
+    import matplotlib.pyplot as plt
+    plt.imshow(img[2].permute(1, 2, 0))
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()
