@@ -188,7 +188,7 @@ def main():
             img = trans(img)
             result = model.infer(img)
             print(result)
-            if not NAME2ID['person'] in result[3]:
+            if not NAME2ID['person'] in result[2]:
                 f.write(name + '\n')
 
 
