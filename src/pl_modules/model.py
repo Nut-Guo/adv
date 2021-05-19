@@ -18,11 +18,12 @@ import matplotlib.pyplot as plt
 
 
 class PatchNet(pl.LightningModule):
-    def __init__(self, yolo_version, patch_size=100, init_patch = 'random', *args, **kwargs) -> None:
+    def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
         self.patch_size = patch_size
         self.patch_applier = PatchApplier()
+        self.alpha = alpha
         self.patch_transformer = PatchTransformer(self.yolo_config.height, self.patch_size)
         self.pred_extractor = PredExtractor('person')
         self.total_variation = TotalVariation()
@@ -70,7 +71,7 @@ class PatchNet(pl.LightningModule):
         detections = self.yolo(image_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
-        tv_loss = tv * 0.1
+        tv_loss = tv * self.alpha
         det_loss = torch.sum(-torch.log(1 - (torch.cat(pred)))) if len(pred) > 0 else torch.tensor(0.1)
         self.log_dict(
             {
