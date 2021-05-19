@@ -63,7 +63,8 @@ class PatchNet(pl.LightningModule):
 
     def step(self, batch: Any, batch_idx: int):
         image_batch = batch['image']
-        self.patch.data = self.patch.data.clamp(0.001, 0.999)
+        with torch.no_grad():
+            self.patch.data = self.patch.data.clamp(0.001, 0.999)
         adv_batch = self.patch_transformer(self.patch)
         image_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
