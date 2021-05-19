@@ -109,12 +109,12 @@ def run(cfg: DictConfig) -> None:
             **wandb_config,
             tags=cfg.core.tags,
         )
-        # hydra.utils.log.info(f"W&B is now watching <{cfg.logging.wandb_watch.log}>!")
-        # wandb_logger.watch(
-        #     model,
-        #     log=cfg.logging.wandb_watch.log,
-        #     log_freq=cfg.logging.wandb_watch.log_freq,
-        # )
+        hydra.utils.log.info(f"W&B is now watching <{cfg.logging.wandb_watch.log}>!")
+        wandb_logger.watch(
+            model,
+            log=cfg.logging.wandb_watch.log,
+            log_freq=cfg.logging.wandb_watch.log_freq,
+        )
 
     # Store the YaML config separately into the wandb dir
     yaml_conf: str = OmegaConf.to_yaml(cfg=cfg)
