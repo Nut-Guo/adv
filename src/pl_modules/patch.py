@@ -38,9 +38,11 @@ class PatchTransformer(nn.Module):
 
     """
 
-    def __init__(self, image_size, patch_size, degrees=None, translate=None, scale=None, brightness=None, contrast=None,
+    def __init__(self, image_size, patch_size, portion=1, degrees=None, translate=None, scale=None, brightness=None, contrast=None,
                  saturation=None, hue=None):
         super(PatchTransformer, self).__init__()
+        self.image_size = image_size
+        self.portion = portion
         self.pad_size = (image_size - patch_size) // 2
         self.transforms = transforms.Compose([
             transforms.Pad(
@@ -75,8 +77,37 @@ class PatchTransformer(nn.Module):
         result = result.expand(-1, -1, adv_batch.size(-3), adv_batch.size(-2), adv_batch.size(-1))
         return result
 
-    def forward(self, adv_patch):
-        return self.transforms(adv_patch)
+    def placeinto_box(self, patch, box, base):
+        size = min(box[2] - box[0], box[3]-box[1])
+        trans = transforms.Resize(size) * self.portion
+        patch = trans(patch)
+        midx = box[2] - box[0]
+        midy = box[3] - box[1]
+        x1 = midx - size[0]//2
+        x2 = midx + size[0]//2
+        y1 = midy - size[0]//2
+        y2 = midy + size[0]//2
+        base[:, x1:x2, y1:y2] = patch
+        return base
+
+    def forward(self, adv_patch, ground_truth):
+        """
+        Transform the adv patch according to the bounding boxes in ground truth
+        Args:
+            adv_patch: patch to be applied
+            ground_truth: bounding boxes from yolo detection.
+
+        Returns:
+            Tensors of the same shape as images with patch in the middle of the targets
+        """
+        adv_batch = []
+        for boxes in ground_truth['boxes']:
+            base = torch.zeros((3, self.image_size, self.image_size))
+            for box in boxes:
+                base = self.placeinto_box(adv_patch, box, base)
+            adv_batch.append(base)
+        return torch.stack(adv_batch)
+        # return self.transforms(adv_patch)
     # def forward(self, adv_patch, lab_batch, img_size, do_rotate=True, rand_loc=True):
     #     # adv_patch = F.conv2d(adv_patch.unsqueeze(0),self.kernel,padding=(2,2))
     #     adv_patch = self.medianpooler(adv_patch.unsqueeze(0))
@@ -207,12 +238,9 @@ class PatchApplier(nn.Module):
     def __init__(self):
         super(PatchApplier, self).__init__()
 
-    def forward(self, img_batch, adv_batch):
-        img_batch = torch.where((adv_batch == 0), img_batch,
-                                adv_batch.unsqueeze(0).expand(img_batch.shape[0], -1, -1, -1))
-        # print(adv_batch)
-        # adv_batch = adv_batch.unsqueeze(0).expand(img_batch.shape[0], -1, -1, -1)
-        # img_batch[adv_batch != 0] = adv_batch[adv_batch != 0]
+    @staticmethod
+    def forward(img_batch, adv_batch):
+        img_batch = torch.where((adv_batch == 0), img_batch, adv_batch)
         return img_batch
 
 
