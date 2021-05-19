@@ -199,11 +199,11 @@ def main():
                 print(result[2])
             else:
                 mask = result[2] == NAME2ID['person']
-                new_res = {name: {"boxes": result[0][mask].tolist(), "confidence": result[1][mask].tolist()}}
+                new_res = {
+                    name: {"boxes": (result[0][mask] / config.height).tolist(), "confidence": result[1][mask].tolist()}}
                 # annotations[name] = new_res
                 json.dump(new_res, json_file)
                 json_file.write('\n')
-
 
 
 if __name__ == "__main__":
