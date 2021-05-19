@@ -186,7 +186,7 @@ def main():
         for name in names:
             img = Image.open(os.path.join(path, name))
             img = trans(img)
-            if img.shape[1] != 3:
+            if img.shape[0] != 3:
                 f.write(name + '\n')
                 print(img.dims)
                 continue
