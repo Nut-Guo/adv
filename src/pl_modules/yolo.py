@@ -189,6 +189,7 @@ def main():
             if img.dims(1) != 3:
                 f.write(name + '\n')
                 print(img.dims)
+                continue
             result = model.infer(img)
             if not NAME2ID['person'] in result[2]:
                 f.write(name + '\n')
