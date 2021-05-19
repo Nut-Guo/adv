@@ -14,6 +14,8 @@ from src.pl_modules.yolo import *
 from src.pl_modules.patch import *
 import wandb
 import matplotlib.pyplot as plt
+
+
 # from src.pl_modules.median_pool import *
 
 
@@ -75,14 +77,17 @@ class PatchNet(pl.LightningModule):
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-                'patched_img': wandb.Image(image_batch[0].clone().detach())
+                'patched_img': wandb.Image(
+                    torchvision.utils.draw_bounding_boxes(image_batch[0].clone().detach(), gt_output['boxes'][0],
+                                                          width=4))
             })
         self.yolo.eval()
         detections = self.yolo(image_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
         tv_loss = tv * self.alpha
-        det_loss = torch.sum(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs']))))) if len(pred['classprobs']) > 0 else torch.tensor(0.1)
+        det_loss = torch.mean(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs']))))) if len(
+            pred['classprobs']) > 0 else torch.tensor(0.1)
         self.log_dict(
             {
                 'det_loss': det_loss,
@@ -122,7 +127,7 @@ class PatchNet(pl.LightningModule):
         return loss
 
     def configure_optimizers(
-        self,
+            self,
     ) -> Union[Optimizer, Tuple[Sequence[Optimizer], Sequence[Any]]]:
         """
         Choose what optimizers and learning-rate schedulers to use in your optimization.
