@@ -199,7 +199,7 @@ def main():
                 print(result[2])
             else:
                 mask = result[2] == NAME2ID['person']
-                new_res = {"boxes": result[0][mask], "confidence": result[1][mask]}
+                new_res = {"boxes": result[0][mask].cpu(), "confidence": result[1][mask].cpu()}
                 annotations[name] = new_res
     with open("annotations.json") as f:
         json.dump(annotations, f)
