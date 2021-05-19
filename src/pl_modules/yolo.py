@@ -202,6 +202,7 @@ def main():
                 new_res = {name: {"boxes": result[0][mask].tolist(), "confidence": result[1][mask].tolist()}}
                 # annotations[name] = new_res
                 json.dump(new_res, json_file)
+                json_file.write('\n')
 
 
 
