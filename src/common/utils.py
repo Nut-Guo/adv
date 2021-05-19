@@ -92,8 +92,8 @@ load_envs()
 # Set the cwd to the project root
 PROJECT_ROOT: Path = Path(get_env("PROJECT_ROOT"))
 MODEL_PATH: Path = Path(get_env("MODEL_PATH"))
-assert (
-    PROJECT_ROOT.exists(),
-), "You must configure the PROJECT_ROOT environment variable in a .env file!"
+# assert (
+#     PROJECT_ROOT.exists(),
+# ), "You must configure the PROJECT_ROOT environment variable in a .env file!"
 
 os.chdir(PROJECT_ROOT)
