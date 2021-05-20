@@ -76,7 +76,7 @@ class PatchNet(pl.LightningModule):
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
         tv_loss = tv * self.alpha
-        if pred['classprobs'][0].nelements == 0:
+        if pred['classprobs'][0].nelement() == 0:
             det_loss = torch.mean(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
             self.log("confidence", pred['classprobs'][0][0])
         else:
