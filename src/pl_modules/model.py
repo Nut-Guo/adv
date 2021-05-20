@@ -84,7 +84,7 @@ class PatchNet(pl.LightningModule):
 
         image = image_batch[0].clone().clamp(0, 1).detach()
         image = (image * 255).byte()
-        bbox_image = draw_bounding_boxes(image, pred['boxes'][0].byte(), width=3,
+        bbox_image = draw_bounding_boxes(image, pred['boxes'][0].byte().cpu(), width=3,
                                          font="LiberationMono-Bold.ttf", font_size=30)
         if batch_idx % self.log_interval == 0:
             self.logger.experiment.log({
