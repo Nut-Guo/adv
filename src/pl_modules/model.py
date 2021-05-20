@@ -82,7 +82,8 @@ class PatchNet(pl.LightningModule):
         else:
             det_loss = torch.tensor(0.)
         try:
-            image = (image_batch[0].clone() * 255).detach().cpu().byte()
+            trans = transforms.ToPILImage()
+            image = trans((image_batch[0].clone() * 255).detach())
             bbox_image = draw_bounding_boxes(image, pred['boxes'][0], width=3,
                                              font="LiberationMono-Bold.ttf", font_size=30)
         except:
