@@ -68,9 +68,9 @@ class PersonDataset(object):
         name = self.imgs[idx]
         img_path = os.path.join(self.path, name)
         img = Image.open(img_path).convert("RGB")
-        boxes = torch.Tensor(self.anno[name]['boxes'], dtype=torch.float)
+        boxes = torch.Tensor(self.anno[name]['boxes'])
         boxes = boxes.clamp(0, 1) * self.image_size
-        confidence = torch.Tensor(self.anno[name]['confidence'], dtype=torch.float)
+        confidence = torch.Tensor(self.anno[name]['confidence'])
         if self.transforms is not None:
             img = self.transforms(img)
         return {
