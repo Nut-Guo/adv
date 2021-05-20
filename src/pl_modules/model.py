@@ -84,43 +84,55 @@ class PatchNet(pl.LightningModule):
         tv_loss = tv * self.alpha
         det_loss = torch.mean(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs']))))) if len(
             pred['classprobs']) > 0 else torch.tensor(0.1)
-        self.log_dict(
-            {
-                'det_loss': det_loss,
-                'tv_loss': tv_loss,
-            }
-        )
+        # self.log_dict(
+        #     {
+        #         'det_loss': det_loss,
+        #         'tv_loss': tv_loss,
+        #     }
+        # )
         loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
-        return loss
+        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss}
+        return losses
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        loss = self.step(batch, batch_idx)
+        losses = self.step(batch, batch_idx)
         self.log_dict(
             {
-                "train_loss": loss,
+                "train_loss": losses['loss'],
+                "train_det_loss": losses['det_loss'],
+                "train_tv_loss": losses['tv_loss'],
             },
             on_step=True,
             on_epoch=True,
             prog_bar=True,
         )
-        return loss
+        return losses['loss']
 
     def validation_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        loss = self.step(batch, batch_idx)
+        losses = self.step(batch, batch_idx)
         self.log_dict(
-            {"val_loss": loss},
-            on_step=True,
+            {
+                "val_loss": losses['loss'],
+                "val_det_loss": losses['det_loss'],
+            },
+            on_step=False,
             on_epoch=True,
             prog_bar=True,
         )
-        return loss
+        return losses['loss']
 
     def test_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        loss = self.step(batch, batch_idx)
+        losses = self.step(batch, batch_idx)
         self.log_dict(
-            {"test_loss": loss},
+            {
+                "test_loss": losses['loss'],
+                "test_det_loss": losses['det_loss'],
+            },
+            on_step=False,
+            on_epoch=True,
+            prog_bar=True,
         )
-        return loss
+        return losses['loss']
 
     def configure_optimizers(
         self,
