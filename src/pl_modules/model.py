@@ -87,9 +87,6 @@ class PatchNet(pl.LightningModule):
         boxes = pred['boxes'][0].clone().clamp(0, 1).detach().cpu().byte()
         bbox_image = draw_bounding_boxes(image, boxes, width=3,
                                          font="LiberationMono-Bold.ttf", font_size=30)
-        print('bbox_image:')
-        print(bbox_image)
-        print()
         if batch_idx % self.log_interval == 0:
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
