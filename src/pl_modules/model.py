@@ -87,15 +87,11 @@ class PatchNet(pl.LightningModule):
         boxes = pred['boxes'][0].clone().clamp(0, 1).detach().cpu().byte()
         bbox_image = draw_bounding_boxes(image, boxes, width=3,
                                          font="LiberationMono-Bold.ttf", font_size=30)
-        plt.figure()
-        plt.axis('off')
-        plt.imshow(torch.cat((image, bbox_image), 2).permute(1, 2, 0).detach().numpy())
-        plt.show()
         if batch_idx % self.log_interval == 0:
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-                # 'patched_img': wandb.Image(bbox_image)
+                'patched_img': wandb.Image(bbox_image)
             })
         # self.log_dict(
         #     {
