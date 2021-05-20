@@ -156,7 +156,6 @@ def main(cfg: omegaconf.DictConfig):
         optim=cfg.optim,
         data=cfg.data,
         logging=cfg.logging,
-        ,
     )
 
 
