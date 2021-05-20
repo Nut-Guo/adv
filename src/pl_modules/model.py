@@ -8,7 +8,7 @@ from torch import nn
 import torchvision
 from omegaconf import DictConfig
 from torch.optim import Optimizer
-
+from torchvision.utils import draw_bounding_boxes
 from src.common.utils import PROJECT_ROOT
 from src.pl_modules.yolo import *
 from src.pl_modules.patch import *
@@ -71,12 +71,6 @@ class PatchNet(pl.LightningModule):
         adv_batch = self.patch_transformer(self.patch, batch['boxes'])
         image_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
-        if batch_idx % self.log_interval == 0:
-            self.logger.experiment.log({
-                'patch': wandb.Image(self.patch.clone().detach()),
-                'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-                'patched_img': wandb.Image(image_batch[0].clone().detach())
-            })
         self.yolo.eval()
         detections = self.yolo(image_batch)
         pred = self.pred_extractor(detections)
@@ -87,7 +81,16 @@ class PatchNet(pl.LightningModule):
             self.log("confidence", pred['classprobs'][0][0])
         else:
             det_loss = torch.tensor(0.)
-
+        image = (image_batch[0].clone() * 255).detach().cpu().byte()
+        labels = [NAMES[i.item()] for i in detections['labels'][0].cpu()]
+        bbox_image = draw_bounding_boxes(image, detections['boxes'][0], labels, width=3,
+                                         font="LiberationMono-Bold.ttf", font_size=30)
+        if batch_idx % self.log_interval == 0:
+            self.logger.experiment.log({
+                'patch': wandb.Image(self.patch.clone().detach()),
+                'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
+                'patched_img': wandb.Image(bbox_image)
+            })
         # self.log_dict(
         #     {
         #         'det_loss': det_loss,
