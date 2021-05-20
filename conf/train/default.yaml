@@ -24,4 +24,5 @@ early_stopping:
 
 model_checkpoints:
   save_top_k: 2
-  verbose: False
+  verbose: True
+  every_n_val_epochs: 1
