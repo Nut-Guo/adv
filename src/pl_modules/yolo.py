@@ -187,6 +187,7 @@ def main():
     base_path = "/content/drive/MyDrive/datasets"
     json_file = open(os.path.join(base_path, "LIP_annotations.json"), "w")
     from tqdm import tqdm
+    res = {}
     with open(os.path.join(base_path, "LIP_blacklist.txt"), "w") as f:
         for name in tqdm(names):
             img = Image.open(os.path.join(path, name))
@@ -199,14 +200,9 @@ def main():
                 f.write(name + '\n')
             else:
                 mask = result[2] == NAME2ID['person']
-                new_res = {
-                    "name": name,
-                    "boxes": (result[0][mask] / config.height).tolist(),
-                    "confidence": result[1][mask].tolist()
-                }
-                # annotations[name] = new_res
-                json.dump(new_res, json_file)
-                json_file.write('\n')
+                res[name] = {"boxes": (result[0][mask] / config.height).tolist(), "confidence": result[1][mask].tolist()}
+        json.dump(res, json_file)
+        json_file.write('\n')
 
 
 if __name__ == "__main__":
