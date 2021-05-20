@@ -92,11 +92,9 @@ class PatchTransformer(nn.Module):
             y1 = midy - size//2
             x2 = x1 + size
             y2 = y1 + size
-        except:
-            print(patch.shape, box, base.shape)
-        try:
-            base[:, x1:x2, y1:y2 ] = patch
+            base[:, x1:x2, y1:y2] = patch
         except RuntimeError:
+            print(patch.shape, box, base.shape)
             print(x1, y1)
             print(box)
         return base
