@@ -89,7 +89,7 @@ class PersonDataset(object):
 @hydra.main(config_path=str(PROJECT_ROOT / "conf"), config_name="default")
 def main(cfg: omegaconf.DictConfig):
     dataset: DHDDataset = hydra.utils.instantiate(
-        cfg.data.datamodule.datasets.train, _recursive_=False
+        cfg.data.datamodule.datasets.train, 
     )
     print(dataset[0]['image'].shape)
 
