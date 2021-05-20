@@ -82,9 +82,9 @@ class PatchNet(pl.LightningModule):
         else:
             det_loss = torch.tensor(0.)
 
-        image = image_batch[0].clone().clamp(0, 1).detach()
+        image = image_batch[0].clone().clamp(0, 1).detach().cpu()
         image = (image * 255).byte()
-        bbox_image = draw_bounding_boxes(image, pred['boxes'][0].int(), width=3,
+        bbox_image = draw_bounding_boxes(image, pred['boxes'][0].int().cpu(), width=3,
                                          font="LiberationMono-Bold.ttf", font_size=30)
         if batch_idx % self.log_interval == 0:
             self.logger.experiment.log({
