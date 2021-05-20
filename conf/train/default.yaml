@@ -18,9 +18,9 @@ pl_trainer:
 monitor_metric: 'val_loss'
 monitor_metric_mode: 'min'
 
-early_stopping:
-  patience: 42
-  verbose: False
+#early_stopping:
+#  patience: 42
+#  verbose: False
 
 model_checkpoints:
   save_top_k: 2
