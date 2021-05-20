@@ -2,7 +2,7 @@
 # reproducibility
 deterministic: False
 random_seed: 42
-dirpath:
+dirpath: "/content/drive/MyDrive/checkpoints"
 # training
 
 pl_trainer:
