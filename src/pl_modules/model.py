@@ -84,7 +84,7 @@ class PatchNet(pl.LightningModule):
 
         image = image_batch[0].clone().clamp(0, 1).detach().cpu()
         image = (image * 255).byte()
-        boxes = pred['boxes'][0].clamp(0, 1).int().cpu()
+        boxes = pred['boxes'][0].clamp(0, 1).byte().cpu()
         print(boxes)
         print(image)
         bbox_image = draw_bounding_boxes(image, boxes, width=3,
