@@ -94,9 +94,9 @@ class PatchNet(pl.LightningModule):
         losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss}
         return losses
 
-    def training_epoch_end(self, outputs: List[Any]) -> None:
-        mean_loss = torch.mean(torch.stack(outputs['det_loss']))
-        self.get_patch().save()
+    # def training_epoch_end(self, outputs: List[Any]) -> None:
+    #     mean_loss = torch.mean(torch.stack(outputs['det_loss']))
+    #     self.get_patch().save()
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         losses = self.step(batch, batch_idx)
