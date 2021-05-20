@@ -15,7 +15,7 @@ pl_trainer:
   gradient_clip_val: 10.0
   min_epochs: 1
 
-monitor_metric: 'val_loss'
+monitor_metric: 'val_loss_epoch'
 monitor_metric_mode: 'min'
 
 early_stopping:
