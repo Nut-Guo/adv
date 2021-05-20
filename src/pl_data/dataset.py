@@ -4,6 +4,7 @@ from typing import Dict, Tuple, Union
 import hydra
 import omegaconf
 import pytorch_lightning as pl
+import json
 import torch
 import os
 from omegaconf import ValueNode
@@ -46,11 +47,15 @@ class DHDDataset(Dataset):
 
 
 class PersonDataset(object):
-    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode=None,**kwargs):
+    def __init__(self, name: ValueNode, path: ValueNode, annotations: ValueNode, image_size: ValueNode, max_size: ValueNode = None, **kwargs):
         super().__init__()
         self.path = path
         self.name = name
-        self.imgs = list(sorted(os.listdir(self.path)))
+        self.image_size = image_size
+        with open(annotations, 'r') as f:
+            self.anno = json.load(f)
+        self.imgs = list(self.anno.keys())
+        # self.imgs = list(sorted(os.listdir(self.path)))
         if max_size:
             self.imgs = self.imgs[:max_size]
         self.transforms = transforms.Compose([
@@ -59,12 +64,18 @@ class PersonDataset(object):
         ])
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.path, self.imgs[idx])
+        name = self.imgs[idx]
+        img_path = os.path.join(self.path, name)
         img = Image.open(img_path).convert("RGB")
+        boxes = torch.Tensor(self.anno[name]['boxes'], dtype=torch.float)
+        boxes = boxes.clamp(0, 1) * self.image_size
+        confidence = torch.Tensor(self.anno[name]['confidence'], dtype=torch.float)
         if self.transforms is not None:
             img = self.transforms(img)
         return {
             "image": img,
+            "boxes": boxes,
+            "confidence": confidence
         }
 
     def __len__(self):

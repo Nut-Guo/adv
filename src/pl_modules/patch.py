@@ -81,7 +81,7 @@ class PatchTransformer(nn.Module):
         # box[2] = min(self.image_size, box[2])
         # box[3] = min(self.image_size, box[3])
         box = box.clamp(0, self.image_size)
-        box = [max(min(self.image_size, int(p)), 0) for p in box]
+        box = [int(p) for p in box]
         size = int((min(box[2] - box[0], box[3]-box[1]) // 2) * 2 * self.portion)
         trans = transforms.Resize((size, size))
         patch = trans(patch)
@@ -96,18 +96,18 @@ class PatchTransformer(nn.Module):
             print(box)
         return base
 
-    def forward(self, adv_patch, ground_truth):
+    def forward(self, adv_patch, boxes_batch):
         """
         Transform the adv patch according to the bounding boxes in ground truth
         Args:
             adv_patch: patch to be applied
-            ground_truth: bounding boxes from yolo detection.
+            boxes_batch: bounding boxes from yolo detection.
 
         Returns:
             Tensors of the same shape as images with patch in the middle of the targets
         """
         adv_batch = []
-        for boxes in ground_truth['boxes']:
+        for boxes in boxes_batch:
             base = torch.zeros((3, self.image_size, self.image_size), device = 'cuda')
             for box in boxes:
                 base = self.placeinto_box(adv_patch, box, base)

@@ -173,36 +173,43 @@ class PredExtractor(nn.Module):
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Preprocess the image datasets with yolo")
+    parser.add_argument('-i', '--image_path', type=str, action='store', required=True)
+    parser.add_argument('-o', '--output_path', type=str, action='store')
+    parser.add_argument('-m', '--model', type=str, action='store', default='yolov4-tiny')
     # get_names()
-    prepare_files('yolov4-tiny')
-    model, config = get_yolo('yolov4-tiny')
+    args = parser.parse_args()
+    output = args.output if args.output else args.input + '_annotations.json'
+    model, config = get_yolo(args.model)
     from src.pl_data.dataset import PersonDataset
     model = model.cuda()
-    path = '/content/adv/data/LIP/Images/train_images'
-    names = list(sorted(os.listdir(path)))
+    # path = '/content/adv/data/LIP/Images/train_images'
+    input_path = args.input
+    names = list(sorted(os.listdir(input_path)))
     from torchvision import transforms
     trans = transforms.Compose([transforms.ToTensor(), transforms.Resize((416, 416))])
     from PIL import Image
     import json
-    base_path = "/content/drive/MyDrive/datasets"
-    json_file = open(os.path.join(base_path, "LIP_annotations.json"), "w")
+    json_file = open(output, "w")
     from tqdm import tqdm
     res = {}
-    with open(os.path.join(base_path, "LIP_blacklist.txt"), "w") as f:
-        for name in tqdm(names):
-            img = Image.open(os.path.join(path, name))
-            img = trans(img).cuda()
-            if img.shape[0] != 3:
-                f.write(name + '\n')
-                continue
-            result = model.infer(img)
-            if not NAME2ID['person'] in result[2]:
-                f.write(name + '\n')
-            else:
-                mask = result[2] == NAME2ID['person']
-                res[name] = {"boxes": (result[0][mask] / config.height).tolist(), "confidence": result[1][mask].tolist()}
-        json.dump(res, json_file)
-        json_file.write('\n')
+    # with open(os.path.join(base_path, "LIP_blacklist.txt"), "w") as f:
+    for name in tqdm(names):
+        img = Image.open(os.path.join(path, name))
+        img = trans(img).cuda()
+        if img.shape[0] != 3:
+            # f.write(name + '\n')
+            continue
+        result = model.infer(img)
+        if not NAME2ID['person'] in result[2]:
+            # f.write(name + '\n')
+            continue
+        else:
+            mask = result[2] == NAME2ID['person']
+            res[name] = {"boxes": (result[0][mask] / config.height).tolist(), "confidence": result[1][mask].tolist()}
+    json.dump(res, json_file)
+    json_file.write('\n')
 
 
 if __name__ == "__main__":
