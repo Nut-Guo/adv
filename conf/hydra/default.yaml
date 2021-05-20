@@ -1,3 +1,4 @@
+# @package _group_
 run:
   dir: /content/drive/MyDrive/checkpoints/${now:%Y-%m-%d}/${now:%H-%M-%S}
 
