@@ -47,11 +47,12 @@ class DHDDataset(Dataset):
 
 
 class PersonDataset(object):
-    def __init__(self, name: ValueNode, path: ValueNode, annotations: ValueNode, image_size: ValueNode, max_size: ValueNode = None, **kwargs):
+    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode = None, **kwargs):
         super().__init__()
         self.path = path
         self.name = name
         self.image_size = image_size
+        annotations = path + '_annotations.json'
         with open(annotations, 'r') as f:
             self.anno = json.load(f)
         self.imgs = list(self.anno.keys())
