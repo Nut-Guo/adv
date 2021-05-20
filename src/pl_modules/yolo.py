@@ -196,7 +196,7 @@ def main():
     res = {}
     # with open(os.path.join(base_path, "LIP_blacklist.txt"), "w") as f:
     for name in tqdm(names):
-        img = Image.open(os.path.join(path, name))
+        img = Image.open(os.path.join(input_path, name))
         img = trans(img).cuda()
         if img.shape[0] != 3:
             # f.write(name + '\n')
