@@ -80,23 +80,18 @@ class PatchTransformer(nn.Module):
     def placeinto_box(self, patch, box, base):
         # box[2] = min(self.image_size, box[2])
         # box[3] = min(self.image_size, box[3])
-        try:
-            box = box.clamp(0, self.image_size)
-            box = [int(p) for p in box]
-            size = int((min(box[2] - box[0], box[3]-box[1]) // 2) * 2 * self.portion)
-            trans = transforms.Resize((size, size))
-            patch = trans(patch)
-            midx = (box[2] - box[0])//2
-            midy = (box[3] - box[1])//2
-            x1 = midx - size//2
-            y1 = midy - size//2
-            x2 = x1 + size
-            y2 = y1 + size
-            base[:, x1:x2, y1:y2] = patch
-        except RuntimeError:
-            print(patch.shape, box, base.shape)
-            print(x1, y1)
-            print(box)
+        box = box.clamp(0, self.image_size)
+        box = [int(p) for p in box]
+        size = int((min(box[2] - box[0], box[3]-box[1]) // 2) * 2 * self.portion)
+        trans = transforms.Resize((size, size))
+        patch = trans(patch)
+        midx = (box[2] - box[0])//2
+        midy = (box[3] - box[1])//2
+        x1 = midx - size//2
+        y1 = midy - size//2
+        x2 = x1 + size
+        y2 = y1 + size
+        base[:, x1:x2, y1:y2] = patch
         return base
 
     def forward(self, adv_patch, boxes_batch):
