@@ -175,8 +175,8 @@ class PredExtractor(nn.Module):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Preprocess the image datasets with yolo")
-    parser.add_argument('-i', '--image_path', type=str, action='store', required=True)
-    parser.add_argument('-o', '--output_path', type=str, action='store')
+    parser.add_argument('-i', '--input', type=str, action='store', required=True)
+    parser.add_argument('-o', '--output', type=str, action='store')
     parser.add_argument('-m', '--model', type=str, action='store', default='yolov4-tiny')
     # get_names()
     args = parser.parse_args()
