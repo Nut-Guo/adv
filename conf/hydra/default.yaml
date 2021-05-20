@@ -1,6 +1,6 @@
 # @package _group_
 run:
-  dir: /content/drive/MyDrive/checkpoints/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  dir: .cache/${now:%Y-%m-%d}/${now:%H-%M-%S}
 
 sweep:
   dir: .cache/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}/
