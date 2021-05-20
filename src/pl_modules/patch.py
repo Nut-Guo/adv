@@ -110,7 +110,7 @@ class PatchTransformer(nn.Module):
         """
         adv_batch = []
         for boxes in boxes_batch:
-            base = torch.zeros((3, self.image_size, self.image_size), device = 'cuda')
+            base = torch.zeros((3, self.image_size, self.image_size), device='cuda')
             for box in boxes:
                 base = self.placeinto_box(adv_patch, box, base)
             adv_batch.append(base)
