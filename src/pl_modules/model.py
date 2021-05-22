@@ -96,7 +96,7 @@ class PatchNet(pl.LightningModule):
                             "prob": classprob.item()
                         },
                         "domain": "pixel",
-                        "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
+                        "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
                     }
                         for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0]))], batch['boxes'][0], batch['classprobs'][0])
                     ],
