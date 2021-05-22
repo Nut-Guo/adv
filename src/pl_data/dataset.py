@@ -76,7 +76,7 @@ class PersonDataset(object):
         return {
             "image": img,
             "boxes": boxes,
-            "confidence": confidence
+            "classprobs": confidence
         }
 
     def __len__(self):

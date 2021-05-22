@@ -68,21 +68,42 @@ class PatchNet(pl.LightningModule):
             # gt = self.yolo(image_batch)
             # gt_output = self.pred_extractor(gt)
         adv_batch = self.patch_transformer(self.patch, batch['boxes'])
-        image_batch = self.patch_applier(image_batch, adv_batch)
+        patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         self.yolo.eval()
-        detections = self.yolo(image_batch)
+        detections = self.yolo(patched_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
         tv_loss = tv * self.alpha
         if pred['classprobs'][0].nelement() != 0:
-            det_loss = torch.mean(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
+            det_loss = torch.sum(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
             self.log("confidence", pred['classprobs'][0][0])
         else:
             det_loss = torch.tensor(0.)
 
         if batch_idx % self.log_interval == 0:
-            boxes = {
+            origin_boxes = {
+                "predictions": {
+                    "box_data": [{
+                        "position": {
+                            "minX": box[0].item(),
+                            "maxX": box[2].item(),
+                            "minY": box[1].item(),
+                            "maxY": box[3].item(),
+                        },
+                        "class_id": int(label.item()),
+                        "scores": {
+                            "prob": classprob.item()
+                        },
+                        "domain": "pixel",
+                        "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
+                    }
+                        for label, box, classprob in zip([0 for _ in range(len(batch['boxes']))], batch['boxes'], batch['classprobs'])
+                    ],
+                    "class_labels": {i: j for i, j in enumerate(NAMES)},
+                }
+            }
+            patched_boxes = {
                 "predictions": {
                     "box_data": [{
                         "position": {
@@ -106,7 +127,8 @@ class PatchNet(pl.LightningModule):
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-                'patched_img': wandb.Image(image_batch.float().clone().detach(), boxes=boxes)
+                'orig_image': wandb.Image(image_batch.float().clone().detach(), boxes=origin_boxes),
+                'patched_img': wandb.Image(patched_batch.float().clone().detach(), boxes=patched_boxes)
             })
         # self.log_dict(
         #     {
