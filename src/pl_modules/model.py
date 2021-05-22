@@ -75,74 +75,64 @@ class PatchNet(pl.LightningModule):
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
         tv_loss = tv * self.alpha
-        if pred['classprobs'][0].nelement() != 0:
-            det_loss = torch.sum(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
-            self.log("confidence", pred['classprobs'][0][0])
-        else:
-            det_loss = torch.tensor(0.)
+        # if pred['classprobs'][0].nelement() != 0:
+        det_loss = torch.sum(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
+        self.log("confidence", pred['classprobs'][0][0])
+        # else:
+        #     det_loss = torch.tensor(0.)
 
-        # if batch_idx % self.log_interval == 0:
-        #     origin_boxes = {
-        #         "predictions": {
-        #             "box_data": [{
-        #                 "position": {
-        #                     "minX": box[0].item(),
-        #                     "maxX": box[2].item(),
-        #                     "minY": box[1].item(),
-        #                     "maxY": box[3].item(),
-        #                 },
-        #                 "class_id": int(label),
-        #                 "scores": {
-        #                     "prob": classprob.item()
-        #                 },
-        #                 "domain": "pixel",
-        #                 "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
-        #             }
-        #                 for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0]))], batch['boxes'][0], batch['classprobs'][0])
-        #             ],
-        #             "class_labels": {i: j for i, j in enumerate(NAMES)},
-        #         }
-        #     }
-        #     patched_boxes = {
-        #         "predictions": {
-        #             "box_data": [{
-        #                 "position": {
-        #                     "minX": box[0].item(),
-        #                     "maxX": box[2].item(),
-        #                     "minY": box[1].item(),
-        #                     "maxY": box[3].item(),
-        #                 },
-        #                 "class_id": int(label.item()),
-        #                 "scores": {
-        #                     "prob": classprob.item()
-        #                 },
-        #                 "domain": "pixel",
-        #                 "box_caption" : "%s (%.3f)" %(NAMES[int(label.item())], classprob.item())
-        #             }
-        #                 for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
-        #             ],
-        #         "class_labels": {i:j for i, j in enumerate(NAMES)},
-        #         }
-        #     }
-        #     self.logger.experiment.log({
-        #         'patch': wandb.Image(self.patch.clone().detach()),
-        #         'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-        #         'orig_image': wandb.Image(image_batch.clone().detach(), boxes=origin_boxes),
-        #         'patched_img': wandb.Image(patched_batch.clone().detach(), boxes=patched_boxes)
-        #     })
-        # self.log_dict(
-        #     {
-        #         'det_loss': det_loss,
-        #         'tv_loss': tv_loss,
-        #     }
-        # )
-        loss = det_loss + torch.max(tv_loss, torch.tensor(0.1))
+        if batch_idx % self.log_interval == 0:
+            origin_boxes = {
+                "predictions": {
+                    "box_data": [{
+                        "position": {
+                            "minX": box[0].item(),
+                            "maxX": box[2].item(),
+                            "minY": box[1].item(),
+                            "maxY": box[3].item(),
+                        },
+                        "class_id": int(label),
+                        "scores": {
+                            "prob": classprob.item()
+                        },
+                        "domain": "pixel",
+                        "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
+                    }
+                        for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0]))], batch['boxes'][0], batch['classprobs'][0])
+                    ],
+                    "class_labels": {i: j for i, j in enumerate(NAMES)},
+                }
+            }
+            patched_boxes = {
+                "predictions": {
+                    "box_data": [{
+                        "position": {
+                            "minX": box[0].item(),
+                            "maxX": box[2].item(),
+                            "minY": box[1].item(),
+                            "maxY": box[3].item(),
+                        },
+                        "class_id": int(label.item()),
+                        "scores": {
+                            "prob": classprob.item()
+                        },
+                        "domain": "pixel",
+                        "box_caption" : "%s (%.3f)" %(NAMES[int(label.item())], classprob.item())
+                    }
+                        for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
+                    ],
+                "class_labels": {i:j for i, j in enumerate(NAMES)},
+                }
+            }
+            self.logger.experiment.log({
+                'patch': wandb.Image(self.patch.clone().detach()),
+                'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
+                'orig_image': wandb.Image(image_batch.clone().detach(), boxes=origin_boxes),
+                'patched_img': wandb.Image(patched_batch.clone().detach(), boxes=patched_boxes)
+            })
+        loss = det_loss + tv_loss
         losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss}
         return losses
-
-    # def training_epoch_end(self, outputs: List[Any]) -> None:
-    #     mean_loss = torch.mean(torch.stack(outputs['det_loss']))
-    #     self.get_patch().save()
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         losses = self.step(batch, batch_idx)
