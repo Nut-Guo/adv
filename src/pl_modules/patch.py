@@ -48,18 +48,18 @@ class PatchTransformer(nn.Module):
             # transforms.Pad(
             #     self.pad_size
             # ),
-            transforms.RandomAffine(
-                degrees=degrees,
-                translate=translate,
-                scale=scale,
-                # shear=[-1, 1, -1, 1]
-            ),
-            # transforms.ColorJitter(
-            #     brightness=brightness,
-            #     contrast=contrast,
-            #     saturation=saturation,
-            #     hue=hue
+            # transforms.RandomAffine(
+            #     degrees=degrees,
+            #     translate=translate,
+            #     scale=scale,
+            #     # shear=[-1, 1, -1, 1]
             # ),
+            transforms.ColorJitter(
+                brightness=brightness,
+                contrast=contrast,
+                saturation=saturation,
+                hue=hue
+            ),
         ])
         '''
         kernel = torch.cuda.FloatTensor([[0.003765, 0.015019, 0.023792, 0.015019, 0.003765],                                                                                    
@@ -109,6 +109,7 @@ class PatchTransformer(nn.Module):
             base = torch.zeros((3, self.image_size, self.image_size), device='cuda')
             for box in boxes:
                 base = self.placeinto_box(adv_patch, box, base)
+            base = self.transforms(base)
             adv_batch.append(base)
         adv_batch = torch.stack(adv_batch)
         return adv_batch

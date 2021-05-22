@@ -3,13 +3,13 @@
 core:
   version: 0.0.1
   tags:
-    - yolov4
+    - yolov3
 
 defaults:
-  - data: yolov4
+  - data: yolov3
   - hydra: default
   - logging: default
-  - model: yolov4
+  - model: yolov3
   - optim: default
   - train: default
 #    Decomment this parameter to get parallel job running

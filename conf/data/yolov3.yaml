@@ -1,0 +1,35 @@
+# @package _group_
+datamodule:
+  _target_: src.pl_data.datamodule.ImageDataModule
+
+  datasets:
+    train:
+      _target_: src.pl_data.dataset.PersonDataset
+      name: PersonDataset
+      path: ${env:TRAIN_DATASET_PATH}
+      image_size: 416
+#      max_size: 10000
+
+    val:
+      - _target_: src.pl_data.dataset.PersonDataset
+        name: PersonDataset
+        path: ${env:VAL_DATASET_PATH}
+        image_size: 416
+        max_size: 100
+
+    test:
+      - _target_: src.pl_data.dataset.PersonDataset
+        name: PersonDataset
+        path: ${env:TEST_DATASET_PATH}
+        image_size: 416
+        max_size: 100
+
+  num_workers:
+    train: 2
+    val: 2
+    test: 2
+
+  batch_size:
+    train: 1
+    val: 1
+    test: 1
