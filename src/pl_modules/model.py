@@ -93,7 +93,7 @@ class PatchNet(pl.LightningModule):
                         },
                         "class_id": int(label.item()),
                         "scores": {
-                            "prob": classprob
+                            "prob": classprob.item()
                         },
                         "domain": "pixel",
                         "box_caption" : "%s (%.3f)" %(NAMES[int(label.item())], classprob.item())
