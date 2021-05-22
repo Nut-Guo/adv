@@ -91,7 +91,7 @@ class PatchTransformer(nn.Module):
         y1 = midy - size//2
         x2 = x1 + size
         y2 = y1 + size
-        base[:, x1:x2, y1:y2] = patch
+        base[:, y1:y2, x1:x2] = patch
         return base
 
     def forward(self, adv_patch, boxes_batch):
