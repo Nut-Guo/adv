@@ -89,8 +89,8 @@ class PatchTransformer(nn.Module):
         patch = trans(patch)
         x1 = midx - size//2
         y1 = midy - size//2
-        x2 = x1 + size
-        y2 = y1 + size
+        x2 = midx + size//2
+        y2 = midy + size//2
         base[:, x1:x2, y1:y2] = patch
         return base
 
