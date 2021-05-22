@@ -8,7 +8,6 @@ from torch import nn
 import torchvision
 from omegaconf import DictConfig
 from torch.optim import Optimizer
-from torchvision.utils import draw_bounding_boxes
 from src.common.utils import PROJECT_ROOT
 from src.pl_modules.yolo import *
 from src.pl_modules.patch import *
@@ -82,16 +81,32 @@ class PatchNet(pl.LightningModule):
         else:
             det_loss = torch.tensor(0.)
 
-        image = image_batch[0].clone().clamp(0, 1).detach().cpu()
-        image = (image * 255).byte()
-        boxes = pred['boxes'][0].clone().clamp(0, 1).detach().cpu().byte()
-        bbox_image = draw_bounding_boxes(image, boxes, width=10,
-                                         font="LiberationMono-Bold.ttf", font_size=30)
         if batch_idx % self.log_interval == 0:
+            boxes = {
+                "predictions": {
+                    "box_data": [{
+                        "position": {
+                            "minX": box[0].item(),
+                            "maxX": box[2].item(),
+                            "minY": box[1].item(),
+                            "maxY": box[3].item(),
+                        },
+                        "class_id": int(label.item()),
+                        "scores": {
+                            "prob": classprob
+                        },
+                        "domain": "pixel",
+                        "box_caption" : "%s (%.3f)" %(NAMES[int(label.item())], classprob.item())
+                    }
+                        for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
+                    ],
+                "class_labels": NAMES,
+                }
+            }
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-                'patched_img': wandb.Image(bbox_image.float().clone().detach())
+                'patched_img': wandb.Image(image_batch.float().clone().detach(), boxes=boxes)
             })
         # self.log_dict(
         #     {
