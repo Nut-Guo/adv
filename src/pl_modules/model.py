@@ -127,8 +127,8 @@ class PatchNet(pl.LightningModule):
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach()),
-                'orig_image': wandb.Image(image_batch.float().clone().detach(), boxes=origin_boxes),
-                'patched_img': wandb.Image(patched_batch.float().clone().detach(), boxes=patched_boxes)
+                'orig_image': wandb.Image(image_batch.clone().detach(), boxes=origin_boxes),
+                'patched_img': wandb.Image(patched_batch.clone().detach(), boxes=patched_boxes)
             })
         # self.log_dict(
         #     {
