@@ -3,7 +3,7 @@ _target_: src.pl_modules.model.PatchNet
 yolo_version: 'yolov4-tiny'
 patch_size: 400
 image_size: 416
-alpha: 1
+alpha: 0.1
 init_patch: 'gray'
 log_interval: 100
 patch_transforms:
@@ -19,10 +19,10 @@ patch_transforms:
   brightness:
     0.2
   contrast:
-    0
+    0.2
   hue:
-    0
+    0.2
   saturation:
-    0
+    0.2
   portion:
     0.3
