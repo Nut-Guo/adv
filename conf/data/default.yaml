@@ -9,7 +9,7 @@ datamodule:
       path: ${env:TRAIN_DATASET_PATH}
 #      image_size: 416
       image_size: 608
-      max_size: 10
+#      max_size: 10000
 
     val:
       - _target_: src.pl_data.dataset.PersonDataset
