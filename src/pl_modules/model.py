@@ -91,7 +91,7 @@ class PatchNet(pl.LightningModule):
                             "minY": box[1].item(),
                             "maxY": box[3].item(),
                         },
-                        "class_id": int(label.item()),
+                        "class_id": int(label),
                         "scores": {
                             "prob": classprob.item()
                         },
