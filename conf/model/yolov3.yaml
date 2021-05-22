@@ -1,6 +1,7 @@
 # @package _group_
 _target_: src.pl_modules.model.PatchNet
 yolo_version: 'yolov3-tiny'
+image_size: 608
 patch_size: 400
 alpha: 1
 init_patch: 'gray'
