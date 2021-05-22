@@ -82,8 +82,8 @@ class PatchTransformer(nn.Module):
         # box[3] = min(self.image_size, box[3])
         box = box.clamp(0, self.image_size)
         box = [int(p) for p in box]
-        midx = (box[2] - box[0]) // 2
-        midy = (box[3] - box[1]) // 2
+        midx = (box[2] + box[0]) // 2
+        midy = (box[3] + box[1]) // 2
         size = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
         trans = transforms.Resize((size, size))
         patch = trans(patch)
