@@ -1,0 +1,5 @@
+export TRAIN_DATASET_PATH="/home/aistudio/adv/data/LIP/Images/train_images"
+export VAL_DATASET_PATH="/home/aistudio/adv/data/LIP/Images/val_images"
+export TEST_DATASET_PATH="/home/aistudio/adv/data/LIP/Images/testing_images"
+export PROJECT_ROOT=/home/aistudio/adv
+export MODEL_PATH="/home/aistudio/adv/model"
