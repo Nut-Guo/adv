@@ -79,6 +79,8 @@ class PatchNet(pl.LightningModule):
         det_loss = torch.sum(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
         if pred['classprobs'][0].nelement() != 0:
             self.log("confidence", pred['classprobs'][0][0])
+        else:
+            self.log("confidence", torch.Tensor(0))
         # else:
         #     det_loss = torch.tensor(0.)
 
