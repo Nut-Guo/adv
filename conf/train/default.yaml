@@ -25,4 +25,4 @@ monitor_metric_mode: 'min'
 model_checkpoints:
   save_top_k: 2
   verbose: True
-#  every_n_val_epochs: 1
+  every_n_train_steps: 10000
