@@ -5,6 +5,7 @@ pytorch-lightning
 hydra-core
 wandb
 streamlit
+lightning-bolts
 # hydra-joblib-launcher
 
 # Stable stuff usually backward compatible
@@ -12,5 +13,3 @@ dvc
 python-dotenv
 matplotlib
 stqdm
-
-git+https://github.com/groke-technologies/pytorch-lightning-bolts.git@yolo

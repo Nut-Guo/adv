@@ -7,7 +7,8 @@ from torch import nn
 from torchvision.ops import nms
 from src.common.utils import MODEL_PATH
 from src.common.download import download_data
-from pl_bolts.models.detection import YOLO, YOLOConfiguration
+from src.pl_modules.yolo_module import YOLO
+from src.pl_modules.yolo_config import YOLOConfiguration
 
 CONFIG3_BASE_URL = 'https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/'
 WEIGHTS3_BASE_URL = 'https://pjreddie.com/media/files/'
