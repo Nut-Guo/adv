@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 from torch import optim, Tensor
 
-from pl_bolts.models.detection.yolo.yolo_layers import DetectionLayer, RouteLayer, ShortcutLayer
+from src.pl_modules.yolo_layers import DetectionLayer, RouteLayer, ShortcutLayer
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from pl_bolts.utils import _TORCHVISION_AVAILABLE
 from pl_bolts.utils.warnings import warn_missing_pkg
