@@ -1,5 +1,5 @@
 export TRAIN_DATASET_PATH="/kaggle/working/adv/data/LIP/train_images"
 export VAL_DATASET_PATH="/kaggle/working/adv/data/LIP/val_images"
 export TEST_DATASET_PATH="/kaggle/working/adv/data/LIP/testing_images"
-export PROJECT_ROOT=/home/aistudio/adv
-export MODEL_PATH="/home/aistudio/adv/model"
+export PROJECT_ROOT=/kaggle/working/adv
+export MODEL_PATH="/kaggle/working/adv/model"
