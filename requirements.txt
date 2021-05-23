@@ -9,7 +9,7 @@ lightning-bolts
 # hydra-joblib-launcher
 
 # Stable stuff usually backward compatible
-dvc
+# dvc
 python-dotenv
 matplotlib
 stqdm
