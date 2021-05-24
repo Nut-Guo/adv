@@ -11,7 +11,7 @@ thresh_hold: 0.5
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   image_size: 416
-  portion: 0.6
+  portion: 1
   patch_size:
     - 900
     - 1600
