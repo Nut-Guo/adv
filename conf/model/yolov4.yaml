@@ -4,6 +4,7 @@ yolo_version: 'yolov4-tiny'
 alpha: 0.1
 init_patch: 'gray'
 log_interval: 100
+patch_size: 400
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   patch_size: 400
