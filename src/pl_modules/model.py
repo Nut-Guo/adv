@@ -17,11 +17,10 @@ import matplotlib.pyplot as plt
 
 
 class PatchNet(pl.LightningModule):
-    def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, log_interval=100, patch_transformer=None,
-                 pred_extractor=None, image_size=416,  *args, **kwargs) -> None:
+    def __init__(self, yolo_version, init_patch='random', alpha=0.1, log_interval=100, patch_transformer=None,
+                 pred_extractor=None,  *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
-        self.patch_size = patch_size
         self.patch_applier = PatchApplier()
         self.alpha = alpha
         self.patch_transformer = patch_transformer
