@@ -100,4 +100,4 @@ os.chdir(PROJECT_ROOT)
 
 def get_mode(mode: str):
     from torchvision.transforms import InterpolationMode
-    return InterpolationMode['mode']
+    return InterpolationMode[mode]
