@@ -190,9 +190,10 @@ class PatchNet(pl.LightningModule):
             - Tuple of dictionaries as described, with an optional 'frequency' key.
             - None - Fit will run without any optimizer.
         """
-        opt = hydra.utils.instantiate(
-            self.hparams.optim.optimizer, params=[self.patch]
-        )
+        # opt = hydra.utils.instantiate(
+        #     self.hparams.optim.optimizer, params=[self.patch]
+        # )
+        opt = self.hparams.optim.optimizer(params=[self.patch])
         if not self.hparams.optim.use_lr_scheduler:
             return [opt]
         scheduler = hydra.utils.instantiate(
