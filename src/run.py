@@ -96,7 +96,7 @@ def run(cfg: DictConfig) -> None:
     model: pl.LightningModule = hydra.utils.instantiate(
         cfg.model,
         optim=cfg.optim,
-        data=cfg.data,
+        # data=cfg.data,
         logging=cfg.logging,
     )
 
