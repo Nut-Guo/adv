@@ -8,6 +8,8 @@ patch_size: 400
 thresh_hold: 0.5
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
+  image_size: 416
+  portion: 1
   patch_transforms:
     _target_: torchvision.transforms.Compose
     transforms:

@@ -43,7 +43,7 @@ class PatchTransformer(nn.Module):
         super(PatchTransformer, self).__init__()
         self.image_size = image_size
         self.portion = portion
-        self.pad_size = (image_size - patch_size) // 2
+        # self.pad_size = (image_size - patch_size) // 2
         self.base = nn.Parameter(torch.zeros((3, self.image_size, self.image_size)))
         self.register_parameter(name='base', param=self.base)
         self.transforms = patch_transforms
