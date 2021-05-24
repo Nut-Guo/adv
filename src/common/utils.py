@@ -99,5 +99,5 @@ MODEL_PATH: Path = Path(get_env("MODEL_PATH"))
 os.chdir(PROJECT_ROOT)
 
 def get_mode(mode: str):
-    import torchvision.torchvision.transforms.InterpolationMode as interpolation
+    import torchvision.transforms.InterpolationMode as interpolation
     return interpolation['mode']
