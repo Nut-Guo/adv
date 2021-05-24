@@ -22,14 +22,14 @@ def get_env(env_name: str, default: Optional[str] = None) -> str:
     """
     if env_name not in os.environ:
         if default is None:
-            raise KeyError(f"{env_name} not defined and no default value is present!")
+            raise KeyError(f"{oc.env_name} not defined and no default value is present!")
         return default
 
     env_value: str = os.environ[env_name]
     if not env_value:
         if default is None:
             raise ValueError(
-                f"{env_name} has yet to be configured and no default value is present!"
+                f"{oc.env_name} has yet to be configured and no default value is present!"
             )
         return default
 

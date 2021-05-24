@@ -6,7 +6,7 @@ datamodule:
     train:
       _target_: src.pl_data.dataset.PersonDataset
       name: PersonDataset
-      path: ${env:TRAIN_DATASET_PATH}
+      path: ${oc.env:TRAIN_DATASET_PATH}
 #      image_size: 416
       image_size: 608
 #      max_size: 10000
@@ -14,7 +14,7 @@ datamodule:
     val:
       - _target_: src.pl_data.dataset.PersonDataset
         name: PersonDataset
-        path: ${env:VAL_DATASET_PATH}
+        path: ${oc.env:VAL_DATASET_PATH}
 #        image_size: 416
         image_size: 608
         max_size: 100
@@ -22,7 +22,7 @@ datamodule:
     test:
       - _target_: src.pl_data.dataset.PersonDataset
         name: PersonDataset
-        path: ${env:TEST_DATASET_PATH}
+        path: ${oc.env:TEST_DATASET_PATH}
 #        image_size: 416
         image_size: 608
         max_size: 100
