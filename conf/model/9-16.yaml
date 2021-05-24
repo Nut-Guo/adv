@@ -5,16 +5,16 @@ alpha: 0.1
 init_patch: 'gray'
 log_interval: 100
 patch_size:
-  - 900
-  - 1600
+  - 225
+  - 400
 thresh_hold: 0.5
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   image_size: 416
-  portion: 1
+  portion: 0.8
   patch_size:
-    - 900
-    - 1600
+    - 225
+    - 400
   patch_transforms:
     color_jitter:
       _target_: torchvision.transforms.ColorJitter
