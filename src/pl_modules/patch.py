@@ -38,7 +38,7 @@ class PatchTransformer(nn.Module):
 
     """
 
-    def __init__(self, image_size, patch_size, portion=1, patch_transforms=None, degrees=0, translate=None, scale=None, brightness=0, contrast=0,
+    def __init__(self, image_size, portion=1, patch_transforms=None, degrees=0, translate=None, scale=None, brightness=0, contrast=0,
                  saturation=0, hue=0):
         super(PatchTransformer, self).__init__()
         self.image_size = image_size
