@@ -80,7 +80,7 @@ class PatchNet(pl.LightningModule):
         if pred['classprobs'][0].nelement() != 0:
             self.log("confidence", pred['classprobs'][0][0])
         else:
-            self.log("confidence", torch.tensor(0))
+            self.log("confidence", torch.tensor(0, device='cuda'))
 
         if batch_idx % self.log_interval == 0:
             origin_boxes = {
