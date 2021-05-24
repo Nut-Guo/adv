@@ -38,12 +38,12 @@ class PatchTransformer(nn.Module):
 
     """
 
-    def __init__(self, image_size, portion=1, patch_transforms=None, degrees=0, translate=None, scale=None, brightness=0, contrast=0,
+    def __init__(self, image_size, patch_size, portion=1, patch_transforms=None, degrees=0, translate=None, scale=None, brightness=0, contrast=0,
                  saturation=0, hue=0):
         super(PatchTransformer, self).__init__()
         self.image_size = image_size
         self.portion = portion
-        # self.pad_size = (image_size - patch_size) // 2
+        self.patch_size = patch_size
         self.base = nn.Parameter(torch.zeros((3, self.image_size, self.image_size)))
         self.register_parameter(name='base', param=self.base)
         self.transforms = transforms.Compose(list(patch_transforms.values()))
@@ -94,8 +94,9 @@ class PatchTransformer(nn.Module):
         box = [int(p) for p in box]
         midx = (box[2] + box[0]) // 2
         midy = (box[3] + box[1]) // 2
+        x2y = self.patch_size[0] / self.patch_size[1]
         size = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
-        trans = transforms.Resize((size, size), interpolation=transforms.InterpolationMode.NEAREST)
+        trans = transforms.Resize((int(size * x2y), size), interpolation=transforms.InterpolationMode.NEAREST)
         patch = trans(patch)
         x1 = midx - size//2
         y1 = midy - size//2

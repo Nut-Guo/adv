@@ -41,9 +41,9 @@ class PatchNet(pl.LightningModule):
         :return:
         """
         if patch_type == 'gray':
-            adv_patch = nn.Parameter(torch.full((3, self.patch_size, self.patch_size), 0.5), requires_grad=True)
+            adv_patch = nn.Parameter(torch.full((3, self.patch_size[0], self.patch_size[1]), 0.5), requires_grad=True)
         elif patch_type == 'random':
-            adv_patch = nn.Parameter(torch.rand((3, self.patch_size, self.patch_size)), requires_grad=True)
+            adv_patch = nn.Parameter(torch.rand((3, self.patch_size[0], self.patch_size[1])), requires_grad=True)
 
         return adv_patch
 
