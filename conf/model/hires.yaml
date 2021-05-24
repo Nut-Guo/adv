@@ -1,0 +1,47 @@
+
+_target_: src.pl_modules.model.PatchNet
+yolo_version: 'yolov4-tiny'
+alpha: 0.1
+init_patch: 'gray'
+log_interval: 100
+patch_size:
+  - 1440
+  - 2560
+thresh_hold: 0.5
+patch_transformer:
+  _target_: src.pl_modules.patch.PatchTransformer
+  image_size: 416
+  portion: 0.8
+  patch_size:
+    - 1440
+    - 2560
+  patch_transforms:
+    color_jitter:
+      _target_: torchvision.transforms.ColorJitter
+      brightness: 0.2
+      contrast: 0
+      saturation: 0
+      hue: 0
+    pad:
+      _target_: torchvision.transforms.Pad
+      padding: 100
+    affine:
+      _target_: torchvision.transforms.RandomAffine
+      degrees:
+        - -10
+        - 10
+      translate:
+        - 0.25
+        - 0.25
+      scale:
+        - 0.8
+        - 1.2
+      interpolation: "${get_mode:NEAREST}"
+    perspective:
+      _target_: torchvision.transforms.RandomPerspective
+      interpolation: "${get_mode:NEAREST}"
+pred_extractor:
+  _target_: src.pl_modules.yolo.PredExtractor
+  target_class: 'person'
+
+
