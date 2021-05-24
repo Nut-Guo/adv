@@ -196,9 +196,10 @@ class PatchNet(pl.LightningModule):
         opt = self.hparams.optim.optimizer(params=[self.patch])
         if not self.hparams.optim.use_lr_scheduler:
             return [opt]
-        scheduler = hydra.utils.instantiate(
-            self.hparams.optim.lr_scheduler, optimizer=opt
-        )
+        # scheduler = hydra.utils.instantiate(
+        #     self.hparams.optim.lr_scheduler, optimizer=opt
+        # )
+        scheduler = self.hparams.optim.lr_scheduler(optimizer=opt)
         return [opt], [scheduler]
 
 

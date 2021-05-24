@@ -11,7 +11,8 @@ optimizer:
 
 use_lr_scheduler: True
 lr_scheduler:
-  _target_: torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
+  _target_: functools.partial
+  _args_: [ "${get_class:torch.optim.lr_scheduler.CosineAnnealingWarmRestarts}" ]
   T_0: 10
   T_mult: 2
   eta_min: 0 # min value for the lr
