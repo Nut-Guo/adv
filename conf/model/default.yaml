@@ -5,23 +5,29 @@ patch_size: 400
 alpha: 0
 init_patch: 'random'
 log_interval: 100
-patch_transforms:
-  degrees:
-    - -10
-    - 10
-  translate:
-    - 0.25
-    - 0.25
-  scale:
-    - 0.8
-    - 1.2
+patch_transformer:
+  _target_: src.pl_modules.patch.PatchTransformer
+  #  degrees:
+  #    - -10
+  #    - 10
+  #  translate:
+  #    - 0.25
+  #    - 0.25
+  #  scale:
+  #    - 0.8
+  #    - 1.2
   brightness:
     0.2
   contrast:
-    0.2
+    0
+  #    0.2
   saturation:
     0
   hue:
-    0.2
+    0
+  #    0.2
   portion:
     0.3
+pred_extractor:
+  _target_: src.pl_modules.yolo.PredExtractor
+  target_class: 'person'
