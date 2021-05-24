@@ -12,6 +12,9 @@ patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   image_size: 416
   portion: 1
+  patch_size:
+    - 1600
+    - 900
   patch_transforms:
     color_jitter:
       _target_: torchvision.transforms.ColorJitter
