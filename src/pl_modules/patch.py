@@ -57,7 +57,7 @@ class PatchTransformer(nn.Module):
                 hue=hue
             ),
             transforms.Pad(
-                0.4 * patch_size
+                int(0.4 * patch_size)
             ),
             transforms.RandomAffine(
                 degrees=degrees,
