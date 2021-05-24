@@ -17,6 +17,7 @@ from pytorch_lightning.loggers import WandbLogger
 
 from src.common.utils import log_hyperparameters, PROJECT_ROOT
 
+OmegaConf.register_new_resolver("get_class", hydra.utils.get_class)
 
 def build_callbacks(cfg: DictConfig) -> List[Callback]:
     callbacks: List[Callback] = []

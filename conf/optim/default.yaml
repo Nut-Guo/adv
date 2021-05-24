@@ -2,7 +2,7 @@
 optimizer:
   #  Adam-oriented deep learning
   _target_: functools.partial
-  _args_: ["${get_method:torch.optim.Adam}"]
+  _args_: ["${get_class:torch.optim.Adam}"]
   #  These are all default parameters for the Adam optimizer
   lr: 0.001
   betas: [ 0.9, 0.999 ]
