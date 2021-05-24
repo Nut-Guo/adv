@@ -45,6 +45,7 @@ class PatchTransformer(nn.Module):
         self.portion = portion
         self.pad_size = (image_size - patch_size) // 2
         self.base = nn.Parameter(torch.zeros((3, self.image_size, self.image_size)))
+        self.register_parameter(name='base', param=self.base)
         self.transforms = transforms.Compose([
             # transforms.Pad(
             #     self.pad_size
