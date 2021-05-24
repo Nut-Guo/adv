@@ -98,6 +98,7 @@ def run(cfg: DictConfig) -> None:
         data=cfg.data,
         logging=cfg.logging,
     )
+    print(model)
 
     # Instantiate the callbacks
     callbacks: List[Callback] = build_callbacks(cfg=cfg)
