@@ -60,9 +60,12 @@ class PatchTransformer(nn.Module):
                 degrees=degrees,
                 translate=translate,
                 scale=scale,
+                interpolation=transforms.InterpolationMode.NEAREST
                 # shear=[-1, 1, -1, 1]
             ),
-            transforms.RandomPerspective()
+            transforms.RandomPerspective(
+                interpolation=transforms.InterpolationMode.NEAREST
+            )
         ])
         '''
         kernel = torch.cuda.FloatTensor([[0.003765, 0.015019, 0.023792, 0.015019, 0.003765],                                                                                    
