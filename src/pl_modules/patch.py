@@ -44,7 +44,7 @@ class PatchTransformer(nn.Module):
         self.image_size = image_size
         self.portion = portion
         self.pad_size = (image_size - patch_size) // 2
-        self.base = torch.zeros((3, self.image_size, self.image_size))
+        self.base = torch.zeros((3, self.image_size, self.image_size), device='cuda')
         self.transforms = transforms.Compose([
             # transforms.Pad(
             #     self.pad_size
