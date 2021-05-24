@@ -44,6 +44,7 @@ class PatchTransformer(nn.Module):
         self.image_size = image_size
         self.portion = portion
         self.pad_size = (image_size - patch_size) // 2
+        self.base = torch.zeros((3, self.image_size, self.image_size))
         self.transforms = transforms.Compose([
             # transforms.Pad(
             #     self.pad_size
@@ -108,7 +109,7 @@ class PatchTransformer(nn.Module):
         adv_batch = []
         adv_patch = self.transforms(adv_patch)
         for boxes in boxes_batch:
-            base = torch.zeros((3, self.image_size, self.image_size), device='cuda')
+            base = self.base.clone()
             for box in boxes:
                 base = self.placeinto_box(adv_patch, box, base)
             adv_batch.append(base)
