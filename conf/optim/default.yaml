@@ -1,4 +1,4 @@
-# @package _group_
+
 optimizer:
   #  Adam-oriented deep learning
   _target_: torch.optim.Adam

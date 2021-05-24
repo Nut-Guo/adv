@@ -1,4 +1,4 @@
-# @package _group_
+
 _target_: src.pl_modules.model.PatchNet
 yolo_version: 'yolov4-tiny'
 patch_size: 400
