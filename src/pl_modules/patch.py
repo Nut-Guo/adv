@@ -102,8 +102,8 @@ class PatchTransformer(nn.Module):
         #     x2y = self.patch_size[0] / self.patch_size[1]
         #     ysize = int((min(box[2] - box[0], box[3] - box[1])) * self.portion)
         #     xsize = int(x2y * ysize)
-        xsize = self.portion * (box[3] - box[1])
-        ysize = self.portion * (box[2] - box[0])
+        xsize = int(self.portion * (box[3] - box[1]))
+        ysize = int(self.portion * (box[2] - box[0]))
         trans = transforms.Resize((xsize, ysize), interpolation=transforms.InterpolationMode.NEAREST)
         patch = trans(patch)
         x1 = midx - xsize//2
