@@ -18,11 +18,12 @@ import matplotlib.pyplot as plt
 
 class PatchNet(pl.LightningModule):
     def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, log_interval=100, patch_transformer=None,
-                 pred_extractor=None,  *args, **kwargs) -> None:
+                 pred_extractor=None, thresh_hold = 0.5,  *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
         self.patch_applier = PatchApplier()
         self.alpha = alpha
+        self.thresh_hold = thresh_hold
         self.patch_transformer = patch_transformer
         self.pred_extractor = pred_extractor
         self.total_variation = TotalVariation()
@@ -78,8 +79,13 @@ class PatchNet(pl.LightningModule):
         det_loss = torch.sum(torch.cat(pred['scores']) * (-torch.log(1 - (torch.cat(pred['classprobs'])))))
         if pred['classprobs'][0].nelement() != 0:
             self.log("confidence", pred['classprobs'][0][0])
+            if pred['classprobs'][0][0] > self.thresh_hold:
+                self.log_metrics({"success_rate": torch.tensor(0, device='cuda')}, step=100)
+            else:
+                self.log_metrics({"success_rate": torch.tensor(1, device='cuda')}, step=100)
         else:
             self.log("confidence", torch.tensor(0, device='cuda'))
+            self.log_metrics({"success_rate": torch.tensor(1, device='cuda')}, step=100)
 
         if batch_idx % self.log_interval == 0:
             origin_boxes = {
