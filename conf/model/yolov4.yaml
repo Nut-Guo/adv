@@ -12,17 +12,17 @@ patch_transformer:
   portion: 1
   patch_transforms:
     _target_: torchvision.transforms.Compose
-    transforms:
-      - color_jitter:
+    transforms: [
+      color_jitter:
         _target_: torchvision.transforms.ColorJitter
         brightness: 0.2
         contrast: 0
         saturation: 0
         hue: 0
-      - pad:
+      pad:
         _target_: torchvision.transforms.Pad
         padding: 40
-      - affine:
+      affine:
         _target_: torchvision.transforms.RandomAffine
         degrees:
           - -10
@@ -34,30 +34,10 @@ patch_transformer:
           - 0.8
           - 1.2
         interpolation: transforms.InterpolationMode.NEAREST
-      _ perspective:
+      perspective:
         _target_: torchvision.transforms.RandomPerspective
         interpolation: transforms.InterpolationMode.NEAREST
-#  patch_size: 400
-#  image_size: 416
-#    degrees:
-#      - -10
-#      - 10
-#    translate:
-#      - 0.25
-#      - 0.25
-#    scale:
-#      - 0.8
-#      - 1.2
-#  brightness:
-#    0.2
-#  contrast:
-#    0
-#  saturation:
-#    0
-#  hue:
-#    0
-#  portion:
-#    0.3
+        ]
 pred_extractor:
   _target_: src.pl_modules.yolo.PredExtractor
   target_class: 'person'
