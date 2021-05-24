@@ -97,3 +97,7 @@ MODEL_PATH: Path = Path(get_env("MODEL_PATH"))
 # ), "You must configure the PROJECT_ROOT environment variable in a .env file!"
 
 os.chdir(PROJECT_ROOT)
+
+def get_mode(mode: str):
+    import torchvision.torchvision.transforms.InterpolationMode as interpolation
+    return interpolation['mode']

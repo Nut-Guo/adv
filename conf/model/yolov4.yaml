@@ -31,10 +31,10 @@ patch_transformer:
       scale:
         - 0.8
         - 1.2
-      interpolation: "nearest"
+      interpolation: "${get_mode:NEAREST}"
     perspective:
       _target_: torchvision.transforms.RandomPerspective
-      interpolation: "nearest"
+      interpolation: "${get_mode:NEAREST}"
 pred_extractor:
   _target_: src.pl_modules.yolo.PredExtractor
   target_class: 'person'
