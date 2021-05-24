@@ -14,7 +14,7 @@ from pytorch_lightning.callbacks import (
     ModelCheckpoint,
 )
 from pytorch_lightning.loggers import WandbLogger
-import src.common.utils.get_mode
+from src.common.utils import get_mode
 
 from src.common.utils import log_hyperparameters, PROJECT_ROOT
 
