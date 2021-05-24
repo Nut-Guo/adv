@@ -24,7 +24,7 @@ patch_transformer:
       hue: 0
     pad:
       _target_: torchvision.transforms.Pad
-      padding: 100
+      padding: 40
     affine:
       _target_: torchvision.transforms.RandomAffine
       degrees:
