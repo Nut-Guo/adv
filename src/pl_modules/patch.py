@@ -92,18 +92,18 @@ class PatchTransformer(nn.Module):
         # box[3] = min(self.image_size, box[3])
         box = box.clamp(0, self.image_size)
         box = [int(p) for p in box]
-        midx = (box[2] + box[0]) // 2
-        midy = (box[3] + box[1]) // 2
+        midx = (box[3] + box[1]) // 2
+        midy = (box[2] + box[0]) // 2
         x2y = self.patch_size[0] / self.patch_size[1]
-        xsize = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
-        ysize = int(x2y * xsize)
+        ysize = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
+        xsize = int(x2y * ysize)
         trans = transforms.Resize((xsize, ysize), interpolation=transforms.InterpolationMode.NEAREST)
         patch = trans(patch)
         x1 = midx - xsize//2
         y1 = midy - ysize//2
         x2 = x1 + xsize
         y2 = y1 + ysize
-        base[:, y1:y2, x1:x2] = patch
+        base[:, x1:x2, y1:y2] = patch
         return base
 
     def forward(self, adv_patch, boxes_batch):
