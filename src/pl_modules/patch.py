@@ -94,9 +94,14 @@ class PatchTransformer(nn.Module):
         box = [int(p) for p in box]
         midx = (box[3] + box[1]) // 2
         midy = (box[2] + box[0]) // 2
-        y2x = self.patch_size[1] / self.patch_size[0]
-        xsize = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
-        ysize = int(y2x * xsize)
+        if self.patch_size[1] > self.patch_size[0]:
+            y2x = self.patch_size[1] / self.patch_size[0]
+            xsize = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
+            ysize = int(y2x * xsize)
+        else:
+            x2y = self.patch_size[0] / self.patch_size[1]
+            ysize = int((min(box[2] - box[0], box[3] - box[1])) * self.portion)
+            xsize = int(x2y * ysize)
         trans = transforms.Resize((xsize, ysize), interpolation=transforms.InterpolationMode.NEAREST)
         patch = trans(patch)
         x1 = midx - xsize//2
