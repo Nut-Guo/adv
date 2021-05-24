@@ -1,10 +1,10 @@
 
 _target_: src.pl_modules.model.PatchNet
-yolo_version: 'yolov3'
-patch_size: 400
-alpha: 0
-init_patch: 'random'
+yolo_version: 'yolov4-tiny'
+alpha: 0.1
+init_patch: 'gray'
 log_interval: 100
+patch_size: 400
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   patch_size: 400
@@ -33,3 +33,5 @@ patch_transformer:
 pred_extractor:
   _target_: src.pl_modules.yolo.PredExtractor
   target_class: 'person'
+
+
