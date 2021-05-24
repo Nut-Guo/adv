@@ -38,7 +38,7 @@ class PatchTransformer(nn.Module):
 
     """
 
-    def __init__(self, image_size, patch_size, portion=1, degrees=0, translate=None, scale=None, brightness=0, contrast=0,
+    def __init__(self, image_size, patch_size, portion=1, patch_transforms=None, degrees=0, translate=None, scale=None, brightness=0, contrast=0,
                  saturation=0, hue=0):
         super(PatchTransformer, self).__init__()
         self.image_size = image_size
@@ -46,30 +46,31 @@ class PatchTransformer(nn.Module):
         self.pad_size = (image_size - patch_size) // 2
         self.base = nn.Parameter(torch.zeros((3, self.image_size, self.image_size)))
         self.register_parameter(name='base', param=self.base)
-        self.transforms = transforms.Compose([
-            # transforms.Pad(
-            #     self.pad_size
-            # ),
-            transforms.ColorJitter(
-                brightness=brightness,
-                contrast=contrast,
-                saturation=saturation,
-                hue=hue
-            ),
-            transforms.Pad(
-                int(0.4 * patch_size)
-            ),
-            transforms.RandomAffine(
-                degrees=degrees,
-                translate=translate,
-                scale=scale,
-                interpolation=transforms.InterpolationMode.NEAREST
-                # shear=[-1, 1, -1, 1]
-            ),
-            transforms.RandomPerspective(
-                interpolation=transforms.InterpolationMode.NEAREST
-            )
-        ])
+        self.transforms = patch_transforms
+        # self.transforms = transforms.Compose([
+        #     # transforms.Pad(
+        #     #     self.pad_size
+        #     # ),
+        #     transforms.ColorJitter(
+        #         brightness=brightness,
+        #         contrast=contrast,
+        #         saturation=saturation,
+        #         hue=hue
+        #     ),
+        #     transforms.Pad(
+        #         int(0.4 * patch_size)
+        #     ),
+        #     transforms.RandomAffine(
+        #         degrees=degrees,
+        #         translate=translate,
+        #         scale=scale,
+        #         interpolation=transforms.InterpolationMode.NEAREST
+        #         # shear=[-1, 1, -1, 1]
+        #     ),
+        #     transforms.RandomPerspective(
+        #         interpolation=transforms.InterpolationMode.NEAREST
+        #     )
+        # ])
         '''
         kernel = torch.cuda.FloatTensor([[0.003765, 0.015019, 0.023792, 0.015019, 0.003765],                                                                                    
                                          [0.015019, 0.059912, 0.094907, 0.059912, 0.015019],                                                                                    
