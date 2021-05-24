@@ -212,6 +212,78 @@ def main():
     json.dump(res, json_file)
     json_file.write('\n')
 
+def infer(model, image, device = 'cpu'):
+    import torch.nn.functional as F
+    model = model.to(device)
+    image = image.to(device)
+    if not isinstance(image, torch.Tensor):
+        image = F.to_tensor(image)
+    if image.dim() == 3:
+        image = image.unsqueeze(0)
+    model.eval()
+    detections = model(image)
+    detections = model._split_detections(detections)
+    detections = model._filter_detections(detections)
+    return list(zip(detections['boxes'],detections['scores'],detections['labels'], image))
+
+def detect():
+    import cv2
+    import torchvision.transforms as transforms
+    # cap = cv2.VideoCapture(0)
+    video="http://192.168.118.49:4747/video"
+    cap = cv2.VideoCapture(video)
+    model, config = get_yolo('yolov4-tiny')
+    while True:
+        ret, frame = cap.read()
+        # show a frame
+
+        trans = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize(416),
+        ])
+        itrans = transforms.ToPILImage()
+        result = infer(model, trans(frame))
+        image = process_results(result, show=False)
+        image = image.permute(1, 2, 0).numpy()
+        cv2.imshow("capture", image)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+def get_colors(num):
+    import numpy as np
+    from matplotlib import cm
+    colors = cm.get_cmap('hsv')(np.linspace(0, 1, num))[np.newaxis, :, :3]
+    colors = (colors * 255).astype('uint8')[0].tolist()
+    colors = [tuple(color) for color in colors]
+    return colors
+
+def process_results(results, target = ['person'], device = 'cpu', show = False):
+    confidences = []
+    # ids = []
+    import matplotlib.pyplot as plt
+    from torchvision.utils import draw_bounding_boxes
+    for i, result in enumerate(results):
+        bbox, confidence, id, image = result
+        if target:
+            mask = torch.tensor([NAME2ID[i] for i in target],dtype = torch.long, device = device).unsqueeze(0).T
+            # mask = torch.any(id.eq(mask), 0)
+            # mask = torch.logical_and(torch.any(id.eq(mask), 0), confidence > 0.5)
+            mask = confidence > 0.5
+            # confidence = confidence[idx]
+            confidence = confidence[mask]
+            id = id[mask]
+            bbox = bbox[mask]
+            confidences.append(confidence)
+            image = (image * 255).detach().cpu().byte()
+            labels = ["{}({:.3f})".format(NAMES[i.item()], j.item()) for i, j in zip(id, confidence)]
+            bbox_image = draw_bounding_boxes(image, bbox, labels, width=3, colors=get_colors(len(id)),
+                                             font_size=30)
+            if show:
+                plt.figure()
+                plt.axis('off')
+                plt.imshow(torch.cat((image, bbox_image), 2).permute(1, 2, 0).detach().numpy())
+                plt.show()
+    return bbox_image
 
 if __name__ == "__main__":
-    main()
+    detect()
