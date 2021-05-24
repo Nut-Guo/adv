@@ -48,18 +48,19 @@ class PatchTransformer(nn.Module):
             # transforms.Pad(
             #     self.pad_size
             # ),
-            # transforms.RandomAffine(
-            #     degrees=degrees,
-            #     translate=translate,
-            #     scale=scale,
-            #     # shear=[-1, 1, -1, 1]
-            # ),
             transforms.ColorJitter(
                 brightness=brightness,
                 contrast=contrast,
                 saturation=saturation,
                 hue=hue
             ),
+            transforms.RandomAffine(
+                degrees=degrees,
+                translate=translate,
+                scale=scale,
+                # shear=[-1, 1, -1, 1]
+            ),
+            transforms.RandomPerspective()
         ])
         '''
         kernel = torch.cuda.FloatTensor([[0.003765, 0.015019, 0.023792, 0.015019, 0.003765],                                                                                    
@@ -85,7 +86,7 @@ class PatchTransformer(nn.Module):
         midx = (box[2] + box[0]) // 2
         midy = (box[3] + box[1]) // 2
         size = int((min(box[2] - box[0], box[3]-box[1])) * self.portion)
-        trans = transforms.Resize((size, size))
+        trans = transforms.Resize((size, size), interpolation=transforms.InterpolationMode.NEAREST)
         patch = trans(patch)
         x1 = midx - size//2
         y1 = midy - size//2
@@ -105,11 +106,11 @@ class PatchTransformer(nn.Module):
             Tensors of the same shape as images with patch in the middle of the targets
         """
         adv_batch = []
+        adv_patch = self.transforms(adv_patch)
         for boxes in boxes_batch:
-            base = torch.zeros((3, self.image_size, self.image_size), device='cuda')
+            base = torch.zeros((3, self.image_size, self.image_size))
             for box in boxes:
                 base = self.placeinto_box(adv_patch, box, base)
-            base = self.transforms(base)
             adv_batch.append(base)
         adv_batch = torch.stack(adv_batch)
         return adv_batch

@@ -1,7 +1,7 @@
 # Stuff easy to break with updates
-torch
+torch==1.8.1
 torchvision
-pytorch-lightning
+pytorch-lightning==1.3.2
 hydra-core
 wandb
 streamlit
