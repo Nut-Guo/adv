@@ -11,7 +11,7 @@ thresh_hold: 0.5
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   image_size: 416
-  portion: 1
+  portion: 0.5
   patch_size:
     - 1600
     - 900
@@ -24,7 +24,7 @@ patch_transformer:
       hue: 0
     pad:
       _target_: torchvision.transforms.Pad
-      padding: 800
+      padding: 100
     affine:
       _target_: torchvision.transforms.RandomAffine
       degrees:
