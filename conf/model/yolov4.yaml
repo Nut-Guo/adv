@@ -7,9 +7,9 @@ alpha: 0.1
 init_patch: 'gray'
 log_interval: 100
 patch_transforms:
-  degrees:
-    - -10
-    - 10
+#  degrees:
+#    - -10
+#    - 10
 #  translate:
 #    - 0.25
 #    - 0.25
