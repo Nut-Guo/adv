@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 class PatchNet(pl.LightningModule):
-    def __init__(self, yolo_version, init_patch='random', alpha=0.1, log_interval=100, patch_transformer=None,
+    def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, log_interval=100, patch_transformer=None,
                  pred_extractor=None,  *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
@@ -27,6 +27,7 @@ class PatchNet(pl.LightningModule):
         self.pred_extractor = pred_extractor
         self.total_variation = TotalVariation()
         self.log_interval = log_interval
+        self.patch_size = patch_size
         self.patch = self.generate_patch(init_patch)
         self.register_parameter(name='patch', param=self.patch)
         self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
