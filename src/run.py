@@ -50,11 +50,11 @@ def build_callbacks(cfg: DictConfig) -> List[Callback]:
             ModelCheckpoint(
                 dirpath=cfg.train.dirpath,
                 filename='{epoch}-{val_loss:.2f}-{det_loss:.2f}',
-                # monitor=cfg.train.monitor_metric,
-                # mode=cfg.train.monitor_metric_mode,
-                # save_top_k=cfg.train.model_checkpoints.save_top_k,
+                monitor=cfg.train.monitor_metric,
+                mode=cfg.train.monitor_metric_mode,
+                save_top_k=cfg.train.model_checkpoints.save_top_k,
                 verbose=cfg.train.model_checkpoints.verbose,
-                every_n_train_steps=cfg.train.model_checkpoints.every_n_train_steps,
+                # every_n_train_steps=cfg.train.model_checkpoints.every_n_train_steps,
                 every_n_val_epochs=cfg.train.model_checkpoints.every_n_val_epochs
             )
         )
