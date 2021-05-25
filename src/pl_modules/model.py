@@ -80,12 +80,12 @@ class PatchNet(pl.LightningModule):
         if pred['classprobs'][0].nelement() != 0:
             self.log("confidence", pred['classprobs'][0][0])
             if pred['classprobs'][0][0] > self.thresh_hold:
-                self.logger.agg_and_log_metrics({"success_rate": 0}, step=1000)
+                self.logger.agg_and_log_metrics({"success_rate": 0})
             else:
-                self.logger.agg_and_log_metrics({"success_rate": 1}, step=1000)
+                self.logger.agg_and_log_metrics({"success_rate": 1})
         else:
             self.log("confidence", torch.tensor(0, device='cuda'))
-            self.logger.agg_and_log_metrics({"success_rate": 1}, step=1000)
+            self.logger.agg_and_log_metrics({"success_rate": 1})
 
         if batch_idx % self.log_interval == 0:
             origin_boxes = {
