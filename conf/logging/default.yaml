@@ -11,7 +11,7 @@ wandb:
 
 wandb_watch:
   log: 'all'
-  log_freq: 1
+  log_freq: 100
 
 lr_monitor:
   logging_interval: "step"

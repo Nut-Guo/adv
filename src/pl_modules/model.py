@@ -80,12 +80,12 @@ class PatchNet(pl.LightningModule):
         if pred['classprobs'][0].nelement() != 0:
             self.log("confidence", pred['classprobs'][0][0])
             if pred['classprobs'][0][0] > self.thresh_hold:
-                self.logger.agg_and_log_metrics({"success_rate": 0}, step=100)
+                self.logger.agg_and_log_metrics({"success_rate": 0}, step=1000)
             else:
-                self.logger.agg_and_log_metrics({"success_rate": 1}, step=100)
+                self.logger.agg_and_log_metrics({"success_rate": 1}, step=1000)
         else:
             self.log("confidence", torch.tensor(0, device='cuda'))
-            self.logger.agg_and_log_metrics({"success_rate": 1}, step=100)
+            self.logger.agg_and_log_metrics({"success_rate": 1}, step=1000)
 
         if batch_idx % self.log_interval == 0:
             origin_boxes = {
@@ -135,7 +135,8 @@ class PatchNet(pl.LightningModule):
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach(), boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach(), boxes=origin_boxes),
                 'patched_img': wandb.Image(patched_batch.clone().detach(), boxes=patched_boxes)
-            })
+            },
+            commit=False)
         loss = det_loss + tv_loss
         losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss}
         return losses
