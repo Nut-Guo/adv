@@ -15,8 +15,8 @@ pl_trainer:
   gradient_clip_val: 10.0
   min_epochs: 1
 
-monitor_metric: 'success_rate'
-monitor_metric_mode: 'max'
+monitor_metric: 'val_loss'
+monitor_metric_mode: 'min'
 
 early_stopping:
   patience: 42
