@@ -91,7 +91,7 @@ class PatchNet(pl.LightningModule):
         attentions = torch.zeros_like(image_batch, requires_grad=True)
         for attention, detection in zip(attentions, detections):
             for det in detection:
-                attention[int(det[0]): int(det[2]), int(det[1]): int(det[2])] += det[5]
+                attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[5]
         adv_attention = attentions[adv_mask]
         image_attention = attentions[~adv_mask]
         attention_loss = image_attention.sum() - adv_attention.sum()
