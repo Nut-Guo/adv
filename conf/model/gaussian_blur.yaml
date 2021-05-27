@@ -3,7 +3,7 @@ _target_: src.pl_modules.model.PatchNet
 yolo_version: 'yolov3'
 alpha: 0.1
 init_patch: 'gray'
-log_interval: 100
+log_interval: 10
 patch_size:
   - 225
   - 400
