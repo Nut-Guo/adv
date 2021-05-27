@@ -135,9 +135,13 @@ class PatchNet(pl.LightningModule):
             for attention, detection in zip(attentions, detections):
                 for det in detection:
                     attention[int(det[0]): int(det[2]), int(det[1]): int(det[2])] += det[5]
+            adv_mask = torch.where(adv_batch != 0)
+            adv_attention = attentions[adv_mask]
+            image_attention = attentions[~adv_mask]
+            attention_loss = image_attention.sum() - adv_attention.sum()
             attention_img = torchvision.utils.make_grid(attentions)
             plt.axis('off')
-            attention_map = plt.imshow(attention_img)
+            attention_map = plt.imshow(attention_img.cpu())
             plt.colorbar()
 
             self.logger.experiment.log({
@@ -148,8 +152,8 @@ class PatchNet(pl.LightningModule):
                 'attention_map': attention_map
             },
                 commit=False)
-        loss = det_loss + tv_loss
-        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss}
+        loss = det_loss + tv_loss + attention_loss
+        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "attention_loss":attention_loss}
         return losses
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
