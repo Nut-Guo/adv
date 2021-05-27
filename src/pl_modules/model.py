@@ -88,10 +88,11 @@ class PatchNet(pl.LightningModule):
             # self.log("confidence", torch.tensor(0, device='cuda'))
             self.logger.agg_and_log_metrics({"success_rate": 1})
         adv_mask = adv_batch != 0
-        attentions = torch.zeros_like(image_batch, requires_grad=False)
-        for attention, detection in zip(attentions, detections):
-            for det in detection:
-                attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[5]
+        with torch.no_grad():
+            attentions = torch.zeros_like(image_batch, requires_grad=False)
+            for attention, detection in zip(attentions, detections):
+                for det in detection:
+                    attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[5]
         # adv_attention = attentions[adv_mask]
         # image_attention = attentions[~adv_mask]
         # attention_loss = image_attention.sum() - adv_attention.sum()
