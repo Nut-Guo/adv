@@ -25,7 +25,7 @@ patch_transformer:
       hue: 0
     gaussian_blur:
       _target_: torchvision.transforms.GaussianBlur
-      kernel_size: 3
+      kernel_size: 8
     pad:
       _target_: torchvision.transforms.Pad
       padding: 40
