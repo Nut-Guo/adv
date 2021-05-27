@@ -140,7 +140,7 @@ class PatchNet(pl.LightningModule):
             # }
             attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
             plt.axis('off')
-            attention_map = plt.imshow(attention_img.cpu())
+            attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
             plt.colorbar()
 
             self.logger.experiment.log({
