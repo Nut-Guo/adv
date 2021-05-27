@@ -87,6 +87,7 @@ class PersonDataset(object):
         # if self.transforms is not None:
         #     img = self.transforms(img)
         transformed = self.transforms(image=img, bboxes=boxes, probs=confidence)
+        print(transformed)
         return {
             "image": transformed["image"],
             "boxes": transformed["bboxes"],
