@@ -71,7 +71,7 @@ class PersonDataset(object):
             A.HorizontalFlip(),
             A.Resize(image_size, image_size),
             ToTensor()
-        ], bbox_params=A.BboxParams(format='albumentations'))
+        ], bbox_params=A.BboxParams(format='albumentations', label_fields=['probs']))
 
     def __getitem__(self, idx):
         name = self.imgs[idx]
