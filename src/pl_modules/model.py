@@ -89,53 +89,53 @@ class PatchNet(pl.LightningModule):
             self.logger.agg_and_log_metrics({"success_rate": 1})
 
         if batch_idx % self.log_interval == 0:
-            origin_boxes = {
-                "predictions": {
-                    "box_data": [{
-                        "position": {
-                            "minX": box[0].item(),
-                            "maxX": box[2].item(),
-                            "minY": box[1].item(),
-                            "maxY": box[3].item(),
-                        },
-                        "class_id": int(label),
-                        "scores": {
-                            "prob": classprob.item()
-                        },
-                        "domain": "pixel",
-                        "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
-                    }
-                        for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
-                    ],
-                    "class_labels": {i: j for i, j in enumerate(NAMES)},
-                }
-            }
-            patched_boxes = {
-                "predictions": {
-                    "box_data": [{
-                        "position": {
-                            "minX": box[0].item(),
-                            "maxX": box[2].item(),
-                            "minY": box[1].item(),
-                            "maxY": box[3].item(),
-                        },
-                        "class_id": int(label.item()),
-                        "scores": {
-                            "prob": classprob.item()
-                        },
-                        "domain": "pixel",
-                        "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
-                    }
-                        for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
-                    ],
-                    "class_labels": {i: j for i, j in enumerate(NAMES)},
-                }
-            }
+            # origin_boxes = {
+            #     "predictions": {
+            #         "box_data": [{
+            #             "position": {
+            #                 "minX": box[0].item(),
+            #                 "maxX": box[2].item(),
+            #                 "minY": box[1].item(),
+            #                 "maxY": box[3].item(),
+            #             },
+            #             "class_id": int(label),
+            #             "scores": {
+            #                 "prob": classprob.item()
+            #             },
+            #             "domain": "pixel",
+            #             "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
+            #         }
+            #             for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
+            #         ],
+            #         "class_labels": {i: j for i, j in enumerate(NAMES)},
+            #     }
+            # }
+            # patched_boxes = {
+            #     "predictions": {
+            #         "box_data": [{
+            #             "position": {
+            #                 "minX": box[0].item(),
+            #                 "maxX": box[2].item(),
+            #                 "minY": box[1].item(),
+            #                 "maxY": box[3].item(),
+            #             },
+            #             "class_id": int(label.item()),
+            #             "scores": {
+            #                 "prob": classprob.item()
+            #             },
+            #             "domain": "pixel",
+            #             "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
+            #         }
+            #             for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
+            #         ],
+            #         "class_labels": {i: j for i, j in enumerate(NAMES)},
+            #     }
+            # }
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
-                'adv_patch': wandb.Image(adv_batch[0].clone().detach(), boxes=origin_boxes),
-                'orig_image': wandb.Image(image_batch[0].clone().detach(), boxes=origin_boxes),
-                'patched_img': wandb.Image(patched_batch[0].clone().detach(), boxes=patched_boxes)
+                'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
+                'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
+                'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
             },
                 commit=False)
         loss = det_loss + tv_loss
