@@ -80,7 +80,8 @@ class PatchTransformer(nn.Module):
         y1 = midy - ysize//2
         x2 = x1 + xsize
         y2 = y1 + ysize
-        base[:, x1:x2, y1:y2] = patch
+        mask = torch.where(patch != 0)
+        base[:, x1:x2, y1:y2][mask] = patch[mask]
         return base
 
     def forward(self, adv_patch, boxes_batch):
