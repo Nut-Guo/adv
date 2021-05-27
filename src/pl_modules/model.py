@@ -63,12 +63,13 @@ class PatchNet(pl.LightningModule):
         raise NotImplementedError
 
     def step(self, batch: Any, batch_idx: int):
-        image_batch = batch['image']
+        image_batch = batch['image'][0]
+        bboxes = batch['boxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
             # gt = self.yolo(image_batch)
             # gt_output = self.pred_extractor(gt)
-        adv_batch = self.patch_transformer(self.patch, batch['boxes'])
+        adv_batch = self.patch_transformer(self.patch, bboxes)  # batch['boxes'])
         patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         self.yolo.eval()
