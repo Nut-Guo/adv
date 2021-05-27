@@ -126,7 +126,7 @@ class PatchNet(pl.LightningModule):
                         "domain": "pixel",
                         "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
                     }
-                        for label, box, classprob in zip(pred['labels'], pred['boxes'], pred['classprobs'])
+                        for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
                     ],
                     "class_labels": {i: j for i, j in enumerate(NAMES)},
                 }
@@ -135,7 +135,7 @@ class PatchNet(pl.LightningModule):
                 'patch': wandb.Image(self.patch.clone().detach()),
                 'adv_patch': wandb.Image(adv_batch[0].clone().detach(), boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch[0].clone().detach(), boxes=origin_boxes),
-                'patched_img': wandb.Image(patched_batch.clone().detach(), boxes=patched_boxes)
+                'patched_img': wandb.Image(patched_batch[0].clone().detach(), boxes=patched_boxes)
             },
                 commit=False)
         loss = det_loss + tv_loss
