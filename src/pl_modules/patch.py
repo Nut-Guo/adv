@@ -94,11 +94,11 @@ class PatchTransformer(nn.Module):
             Tensors of the same shape as images with patch in the middle of the targets
         """
         adv_batch = []
-        adv_patch = self.transforms(adv_patch)
         for boxes in boxes_batch:
             base = self.base.clone()
+            trans_adv_patch = self.transforms(adv_patch)
             for box in boxes:
-                base = self.placeinto_box(adv_patch, box, base)
+                base = self.placeinto_box(trans_adv_patch, box, base)
             adv_batch.append(base)
         adv_batch = torch.stack(adv_batch)
         return adv_batch
