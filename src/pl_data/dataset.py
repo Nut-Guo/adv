@@ -90,8 +90,8 @@ class PersonDataset(object):
         # print(transformed)
         return {
             "image": transformed["image"],
-            "boxes": transformed["bboxes"],
-            "classprobs": transformed["probs"]
+            "boxes": torch.tensor(transformed["bboxes"]),
+            "classprobs": torch.tensor(transformed["probs"])
         }
 
     def __len__(self):
