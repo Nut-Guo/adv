@@ -86,12 +86,19 @@ class PersonDataset(object):
         # confidence = torch.Tensor(self.anno[name]['confidence'])
         # if self.transforms is not None:
         #     img = self.transforms(img)
-        transformed = self.transforms(image=img, bboxes=boxes, probs=confidence)
+        imgs = []
+        bboxes = []
+        probs = []
+        for i in range(10):
+            transformed = self.transforms(image=img, bboxes=boxes, probs=confidence)
+            imgs.append(transformed["image"])
+            bboxes.append(torch.tensor(transformed["bboxes"]) * self.image_size)
+            probs.append(torch.tensor(transformed["probs"]))
         # print(transformed)
         return {
-            "image": transformed["image"],
-            "boxes": torch.tensor(transformed["bboxes"]) * self.image_size,
-            "classprobs": torch.tensor(transformed["probs"])
+            "image": torch.stack(imgs),#transformed["image"],
+            "boxes": torch.stack(bboxes),#torch.tensor(transformed["bboxes"]) * self.image_size,
+            "classprobs": torch.stack(probs)#torch.tensor(transformed["probs"])
         }
 
     def __len__(self):

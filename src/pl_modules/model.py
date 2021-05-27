@@ -63,7 +63,6 @@ class PatchNet(pl.LightningModule):
         raise NotImplementedError
 
     def step(self, batch: Any, batch_idx: int):
-        print(batch)
         image_batch = batch['image']
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
