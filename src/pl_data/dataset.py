@@ -5,6 +5,7 @@ import hydra
 import omegaconf
 import pytorch_lightning as pl
 import json
+import numpy as np
 import torch
 import os
 from omegaconf import ValueNode
@@ -79,7 +80,7 @@ class PersonDataset(object):
         # img = Image.open(img_path).convert("RGB")
         img = cv2.imread(img_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        boxes = self.anno[name]['boxes']
+        boxes = np.array(self.anno[name]['boxes']).clip(0, 1)
         confidence = self.anno[name]['confidence']
         # boxes = boxes.clamp(0, 1) * self.image_size
         # confidence = torch.Tensor(self.anno[name]['confidence'])
