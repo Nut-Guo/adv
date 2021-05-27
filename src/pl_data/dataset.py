@@ -80,7 +80,7 @@ class PersonDataset(object):
         # img = Image.open(img_path).convert("RGB")
         img = cv2.imread(img_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        boxes = np.array(self.anno[name]['boxes']).clip(0, 1)
+        boxes = np.array(self.anno[name]['boxes']).clip(0, 1).tolist()
         confidence = self.anno[name]['confidence']
         # boxes = boxes.clamp(0, 1) * self.image_size
         # confidence = torch.Tensor(self.anno[name]['confidence'])
