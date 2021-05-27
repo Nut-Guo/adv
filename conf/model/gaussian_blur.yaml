@@ -28,16 +28,12 @@ patch_transformer:
       kernel_size: 9
     hflip:
       _target_: torchvision.transforms.RandomHorizontalFlip
-    vflip:
-      _target_: torchvision.transforms.RandomVerticalFlip
     pad:
       _target_: torchvision.transforms.Pad
       padding: 40
     affine:
       _target_: torchvision.transforms.RandomAffine
-      degrees:
-        - -10
-        - 10
+      degrees: 90
       translate:
         - 0.25
         - 0.25
