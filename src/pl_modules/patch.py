@@ -97,8 +97,8 @@ class PatchTransformer(nn.Module):
         adv_batch = []
         for boxes in boxes_batch:
             base = self.base.clone()
-            trans_adv_patch = self.transforms(adv_patch)
             for box in boxes:
+                trans_adv_patch = self.transforms(adv_patch)
                 base = self.placeinto_box(trans_adv_patch, box, base)
             adv_batch.append(base)
         adv_batch = torch.stack(adv_batch)

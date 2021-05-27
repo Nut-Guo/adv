@@ -26,6 +26,10 @@ patch_transformer:
     gaussian_blur:
       _target_: torchvision.transforms.GaussianBlur
       kernel_size: 9
+    hflip:
+      _target_: torchvision.transforms.RandomHorizontalFlip
+    vflip:
+      _target_: torchvision.transforms.RandomVerticalFlip
     pad:
       _target_: torchvision.transforms.Pad
       padding: 40
