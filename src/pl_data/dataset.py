@@ -70,6 +70,8 @@ class PersonDataset(object):
         self.transforms = A.Compose([
             A.RandomBrightnessContrast(p=0.2),
             A.HorizontalFlip(),
+            A.RandomBrightness(),
+            A.ShiftScaleRotate(),
             A.Resize(image_size, image_size),
             ToTensor()
         ], bbox_params=A.BboxParams(format='albumentations', label_fields=['probs']))
@@ -89,7 +91,7 @@ class PersonDataset(object):
         imgs = []
         bboxes = []
         probs = []
-        for i in range(10):
+        for i in range(8):
             transformed = self.transforms(image=img, bboxes=boxes, probs=confidence)
             imgs.append(transformed["image"])
             bboxes.append(torch.tensor(transformed["bboxes"]) * self.image_size)
