@@ -33,7 +33,7 @@ patch_transformer:
       padding: 40
     affine:
       _target_: torchvision.transforms.RandomAffine
-      degrees: 90
+      degrees: 30
       translate:
         - 0.25
         - 0.25

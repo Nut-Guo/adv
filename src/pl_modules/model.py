@@ -131,11 +131,21 @@ class PatchNet(pl.LightningModule):
             #         "class_labels": {i: j for i, j in enumerate(NAMES)},
             #     }
             # }
+            attentions = torch.zeros_like(image_batch)
+            for attention, detection in zip(attentions, detections):
+                for det in detection:
+                    attention[int(det[0]): int(det[2]), int(det[1]): int(det[2])] += det[5]
+            attention_img = torchvision.utils.make_grid(attentions)
+            plt.axis('off')
+            attention_map = plt.imshow(attention_img)
+            plt.colorbar()
+
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
-                'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
+                #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
                 'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
+                'attention_map': attention_map
             },
                 commit=False)
         loss = det_loss + tv_loss
