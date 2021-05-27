@@ -135,9 +135,9 @@ class PatchNet(pl.LightningModule):
             for attention, detection in zip(attentions, detections):
                 for det in detection:
                     attention[int(det[0]): int(det[2]), int(det[1]): int(det[2])] += det[5]
-            adv_mask = torch.where(adv_batch != 0)
+            adv_mask = adv_batch != 0
             adv_attention = attentions[adv_mask]
-            image_attention = attentions[~adv_mask]
+            image_attention = attentions[~adv_mask[0]]
             attention_loss = image_attention.sum() - adv_attention.sum()
             attention_img = torchvision.utils.make_grid(attentions)
             plt.axis('off')
