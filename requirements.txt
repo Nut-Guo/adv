@@ -6,6 +6,7 @@ hydra-core==1.1.0rc1
 wandb
 streamlit
 lightning-bolts
+albumentations
 # hydra-joblib-launcher
 
 # Stable stuff usually backward compatible
