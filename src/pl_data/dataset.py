@@ -71,8 +71,9 @@ class PersonDataset(object):
             A.RandomBrightnessContrast(p=0.2),
             A.HorizontalFlip(),
             A.RandomBrightness(),
-            A.ShiftScaleRotate(),
-            A.Resize(image_size, image_size),
+            # A.ShiftScaleRotate(),
+            # A.Resize(image_size, image_size)
+            A.RandomSizedBBoxSafeCrop(image_size, image_size),
             ToTensor()
         ], bbox_params=A.BboxParams(format='albumentations', label_fields=['probs']))
 
