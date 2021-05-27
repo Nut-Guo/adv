@@ -87,7 +87,14 @@ class PatchNet(pl.LightningModule):
         else:
             # self.log("confidence", torch.tensor(0, device='cuda'))
             self.logger.agg_and_log_metrics({"success_rate": 1})
-
+        adv_mask = adv_batch != 0
+        attentions = torch.zeros_like(image_batch)
+        for attention, detection in zip(attentions, detections):
+            for det in detection:
+                attention[int(det[0]): int(det[2]), int(det[1]): int(det[2])] += det[5]
+        adv_attention = attentions[adv_mask]
+        image_attention = attentions[~adv_mask]
+        attention_loss = image_attention.sum() - adv_attention.sum()
         if batch_idx % self.log_interval == 0:
             # origin_boxes = {
             #     "predictions": {
@@ -131,14 +138,6 @@ class PatchNet(pl.LightningModule):
             #         "class_labels": {i: j for i, j in enumerate(NAMES)},
             #     }
             # }
-            attentions = torch.zeros_like(image_batch)
-            for attention, detection in zip(attentions, detections):
-                for det in detection:
-                    attention[int(det[0]): int(det[2]), int(det[1]): int(det[2])] += det[5]
-            adv_mask = adv_batch != 0
-            adv_attention = attentions[adv_mask]
-            image_attention = attentions[~adv_mask]
-            attention_loss = image_attention.sum() - adv_attention.sum()
             attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
             plt.axis('off')
             attention_map = plt.imshow(attention_img.cpu())
@@ -153,7 +152,7 @@ class PatchNet(pl.LightningModule):
             },
                 commit=False)
         loss = det_loss + tv_loss + attention_loss
-        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "attention_loss":attention_loss}
+        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "attention_loss": attention_loss}
         return losses
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
