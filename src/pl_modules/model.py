@@ -91,7 +91,6 @@ class PatchNet(pl.LightningModule):
         # shape = image_batch.shape
         with torch.no_grad():
             attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-            print(attentions.shape)
             for attention, detection in zip(attentions, detections.clone().detach()):
                 for det in detection:
                     attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
@@ -151,7 +150,7 @@ class PatchNet(pl.LightningModule):
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
                 'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
-                'attention_map': wandb.Image(attentions.clone().detach())
+                'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
         loss = det_loss + tv_loss #  + attention_loss
