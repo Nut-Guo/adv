@@ -105,7 +105,7 @@ def get_mode(mode: str):
 
 
 def _px_bounds(x, dim):
-    c = x.sum(dim).nonzero().cpu()
+    c = x.sum(dim).nonzero()
     idxs,vals = torch.unique(c[:,0],return_counts=True)
     vs = torch.split_with_sizes(c[:,1],tuple(vals))
     d = {k.item():v for k,v in zip(idxs,vs)}
@@ -120,5 +120,5 @@ def mask2bbox(mask):
     if no_batch: mask = mask[None]
     bb1 = _px_bounds(mask,-1).t()
     bb2 = _px_bounds(mask,-2).t()
-    res = torch.stack(torch.cat((bb1,bb2)),dim=1).to(mask.device)
+    res = torch.stack(torch.cat([bb1,bb2]),dim=1)
     return res[...,0] if no_batch else res
