@@ -102,7 +102,7 @@ class PatchNet(pl.LightningModule):
         adv_atts = torch.sum((inter_y1 - inter_y0) *
                          (inter_x1 - inter_x0) *
                          detections[:, :, 4], dim=1)
-        att_loss = -(adv_atts).sum() * 2 + atts.sum()
+        att_loss = -adv_atts.sum() * 2 + atts.sum()
         # for attention, detection in zip(attentions, detections.clone().detach()):
         #     for det in detection:
         #         attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
