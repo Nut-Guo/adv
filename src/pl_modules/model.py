@@ -67,9 +67,9 @@ class PatchNet(pl.LightningModule):
         bboxes = batch['boxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
-            gt = self.yolo(image_batch)
-            gt_output = self.pred_extractor(gt)
-        adv_batch = self.patch_transformer(self.patch, gt_output['boxes'])  # batch['boxes'])
+            # gt = self.yolo(image_batch)
+            # gt_output = self.pred_extractor(gt)
+        adv_batch = self.patch_transformer(self.patch, bboxes)  # gt_output['boxes'])  # batch['boxes'])
         patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         self.yolo.eval()
@@ -91,8 +91,8 @@ class PatchNet(pl.LightningModule):
         adv_box = mask2bbox(adv_mask).expand_as(detections[:,:,:4])
         print(adv_box.shape)
         # with torch.no_grad():
-        orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-        attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+        # orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+        # attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
         atts = torch.sum((detections[:, :, 3] - detections[:, :, 1]) *
                          (detections[:, :, 2] - detections[:, :, 0]) *
                          detections[:, :, 4], dim=1)
