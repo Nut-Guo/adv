@@ -91,7 +91,8 @@ class PatchNet(pl.LightningModule):
         # with torch.no_grad():
         orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
         attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-        for attention, detection in zip(attentions, detections):
+        atts = torch.sum((detections[:, :, 3] - detections[:, :, 1]) * (detections[:, :, 2] - detections[:, :, 0]) * detections[:, :, 4], dim=1)
+        for attention, detection in zip(attentions, detections.clone().detach()):
             for det in detection:
                 attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
         with torch.no_grad():
