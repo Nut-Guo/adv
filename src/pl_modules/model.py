@@ -144,10 +144,10 @@ class PatchNet(pl.LightningModule):
                 attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
                 for attention, detection in zip(attentions, detections.clone().detach()):
                     for det in detection:
-                        attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
+                        attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
                 for attention, detection in zip(orig_attentions, gt.clone().detach()):
                     for det in detection:
-                        attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
+                        attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
