@@ -98,6 +98,27 @@ MODEL_PATH: Path = Path(get_env("MODEL_PATH"))
 
 os.chdir(PROJECT_ROOT)
 
+
 def get_mode(mode: str):
     from torchvision.transforms import InterpolationMode
     return InterpolationMode[mode]
+
+
+def _px_bounds(x, dim):
+    c = x.sum(dim).nonzero().cpu()
+    idxs,vals = torch.unique(c[:,0],return_counts=True)
+    vs = torch.split_with_sizes(c[:,1],tuple(vals))
+    d = {k.item():v for k,v in zip(idxs,vs)}
+    default_u = torch.tensor([0,x.shape[-1]-1])
+    b = [d.get(o,default_u) for o in range(x.shape[0])]
+    b = [torch.tensor([o.min(),o.max()]) for o in b]
+    return torch.stack(b)
+
+
+def mask2bbox(mask):
+    no_batch = mask.dim()==2
+    if no_batch: mask = mask[None]
+    bb1 = _px_bounds(mask,-1).t()
+    bb2 = _px_bounds(mask,-2).t()
+    res = torch.stack([bb1,bb2],dim=1).to(mask.device)
+    return res[...,0] if no_batch else res

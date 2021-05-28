@@ -8,7 +8,7 @@ from torch import nn
 import torchvision
 from omegaconf import DictConfig
 from torch.optim import Optimizer
-from src.common.utils import PROJECT_ROOT
+from src.common.utils import PROJECT_ROOT, mask2bbox
 from src.pl_modules.yolo import *
 from src.pl_modules.patch import *
 import wandb
@@ -88,11 +88,19 @@ class PatchNet(pl.LightningModule):
             # self.log("confidence", torch.tensor(0, device='cuda'))
             self.logger.agg_and_log_metrics({"success_rate": 1})
         adv_mask = adv_batch != 0
+        adv_box = mask2bbox(adv_mask).expand_as(detections[:,:,:4])
         # with torch.no_grad():
         orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
         attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
         atts = torch.sum((detections[:, :, 3] - detections[:, :, 1]) *
                          (detections[:, :, 2] - detections[:, :, 0]) *
+                         detections[:, :, 4], dim=1)
+        inter_x0 = torch.max(adv_box[:, :, 0], detections[:, :, 0])
+        inter_x1 = torch.min(adv_box[:, :, 2], detections[:, :, 2])
+        inter_y0 = torch.max(adv_box[:, :, 1], detections[:, :, 1])
+        inter_y1 = torch.min(adv_box[:, :, 3], detections[:, :, 3])
+        adv_atts = torch.sum((inter_y1 - inter_y0) *
+                         (inter_x1 - inter_x0) *
                          detections[:, :, 4], dim=1)
         for attention, detection in zip(attentions, detections.clone().detach()):
             for det in detection:
