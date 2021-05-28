@@ -30,7 +30,9 @@ patch_transformer:
       _target_: torchvision.transforms.RandomHorizontalFlip
     pad:
       _target_: torchvision.transforms.Pad
-      padding: 40
+      padding:
+        - 110
+        - 30
     affine:
       _target_: torchvision.transforms.RandomAffine
       degrees: 30
