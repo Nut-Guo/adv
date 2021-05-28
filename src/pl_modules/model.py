@@ -88,7 +88,16 @@ class PatchNet(pl.LightningModule):
             # self.log("confidence", torch.tensor(0, device='cuda'))
             self.logger.agg_and_log_metrics({"success_rate": 1})
         adv_mask = adv_batch != 0
-        # shape = image_batch.shape
+        # with torch.no_grad():
+        orig_attentions = torch.zeros_like(image_batch[:, 0, :, :])
+        attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+        for attention, detection in zip(attentions, detections.clone().detach()):
+            for det in detection:
+                attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+        with torch.no_grad():
+            for attention, detection in zip(orig_attentions, gt.clone().detach()):
+                for det in detection:
+                    attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
         # adv_attention = attentions[adv_mask]
         # image_attention = attentions[~adv_mask]
         # attention_loss = image_attention.sum() - adv_attention.sum()
@@ -139,15 +148,6 @@ class PatchNet(pl.LightningModule):
             # plt.axis('off')
             # attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
             # plt.colorbar()
-            with torch.no_grad():
-                orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-                attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-                for attention, detection in zip(attentions, detections.clone().detach()):
-                    for det in detection:
-                        attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-                for attention, detection in zip(orig_attentions, gt.clone().detach()):
-                    for det in detection:
-                        attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
