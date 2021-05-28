@@ -120,5 +120,5 @@ def mask2bbox(mask):
     if no_batch: mask = mask[None]
     bb1 = _px_bounds(mask,-1)
     bb2 = _px_bounds(mask,-2)
-    res = torch.cat([bb1,bb2], dim=1)
+    res = torch.cat([bb1,bb2], dim=1).to(mask.device)
     return res[...,0] if no_batch else res
