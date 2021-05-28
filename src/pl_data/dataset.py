@@ -51,10 +51,11 @@ class DHDDataset(Dataset):
 
 
 class PersonDataset(object):
-    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode = None, **kwargs):
+    def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, max_size: ValueNode = None, augment_size: ValueNode = 1, **kwargs):
         super().__init__()
         self.path = path
         self.name = name
+        self.augment_size = augment_size
         self.image_size = image_size
         annotations = path + '_annotations.json'
         with open(annotations, 'r') as f:
@@ -92,7 +93,7 @@ class PersonDataset(object):
         imgs = []
         bboxes = []
         probs = []
-        for i in range(8):
+        for i in range(self.augment_size):
             transformed = self.transforms(image=img, bboxes=boxes, probs=confidence)
             imgs.append(transformed["image"])
             bboxes.append(torch.tensor(transformed["bboxes"]) * self.image_size)

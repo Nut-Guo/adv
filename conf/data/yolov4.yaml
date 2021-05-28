@@ -8,6 +8,7 @@ datamodule:
       name: PersonDataset
       path: ${oc.env:TRAIN_DATASET_PATH}
       image_size: 416
+      augment_size: 1
 #      max_size: 1000
 
     val:
@@ -15,6 +16,7 @@ datamodule:
         name: PersonDataset
         path: ${oc.env:VAL_DATASET_PATH}
         image_size: 416
+        augment_size: 1
 #        max_size: 100
 
     test:
@@ -22,6 +24,7 @@ datamodule:
         name: PersonDataset
         path: ${oc.env:TEST_DATASET_PATH}
         image_size: 416
+        augment_size: 1
 #        max_size: 100
 
   num_workers:
