@@ -97,10 +97,10 @@ class PatchTransformer(nn.Module):
         adv_batch = []
         for boxes in boxes_batch:
             base = self.base.clone()
-            boxes_area = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
-            box_id = torch.argmax(boxes_area, 0)
+            # boxes_area = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
+            # box_id = torch.argmax(boxes_area, 0)
             # for box in boxes:
-            box = boxes[box_id]
+            box = boxes[0]
             trans_adv_patch = self.transforms(adv_patch)
             base = self.placeinto_box(trans_adv_patch, box, base)
             adv_batch.append(base)

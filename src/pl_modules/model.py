@@ -103,13 +103,14 @@ class PatchNet(pl.LightningModule):
         adv_atts = torch.sum((inter_y1 - inter_y0) *
                          (inter_x1 - inter_x0) *
                          detections[:, :, 4], dim=1)
-        for attention, detection in zip(attentions, detections.clone().detach()):
-            for det in detection:
-                attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-        with torch.no_grad():
-            for attention, detection in zip(orig_attentions, gt.clone().detach()):
-                for det in detection:
-                    attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+        att_loss = (adv_atts).sum() * 2 - atts.sum()
+        # for attention, detection in zip(attentions, detections.clone().detach()):
+        #     for det in detection:
+        #         attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+        # with torch.no_grad():
+        #     for attention, detection in zip(orig_attentions, gt.clone().detach()):
+        #         for det in detection:
+        #             attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
 
         # adv_attention = attentions[adv_mask]
         # image_attention = attentions[~adv_mask]
@@ -165,13 +166,13 @@ class PatchNet(pl.LightningModule):
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
-                'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
+                # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
                 'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
-                'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
+                # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
-        loss = det_loss + tv_loss #  + attention_loss
-        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss} #  , "attention_loss": attention_loss}
+        loss = det_loss + tv_loss + att_loss#  + attention_loss
+        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "att_loss": att_loss} #  , "attention_loss": attention_loss}
         return losses
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
@@ -181,6 +182,7 @@ class PatchNet(pl.LightningModule):
                 "train_loss": losses['loss'],
                 "train_det_loss": losses['det_loss'],
                 "train_tv_loss": losses['tv_loss'],
+                "train_att_loss": losses['att_loss'],
             },
             on_step=True,
             on_epoch=True,
