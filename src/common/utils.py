@@ -118,7 +118,7 @@ def _px_bounds(x, dim):
 def mask2bbox(mask):
     no_batch = mask.dim()==2
     if no_batch: mask = mask[None]
-    bb1 = _px_bounds(mask,-1).t()
-    bb2 = _px_bounds(mask,-2).t()
-    res = torch.cat([bb1,bb2])
+    bb1 = _px_bounds(mask,-1)
+    bb2 = _px_bounds(mask,-2)
+    res = torch.cat([bb1,bb2], dim=1)
     return res[...,0] if no_batch else res
