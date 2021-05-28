@@ -94,14 +94,14 @@ class PatchNet(pl.LightningModule):
         # attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
         atts = torch.sum((detections[:, :, 3] - detections[:, :, 1]) *
                          (detections[:, :, 2] - detections[:, :, 0]) *
-                         detections[:, :, 4], dim=1)
+                         detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
         inter_x0 = torch.max(adv_box[:, :, 0], detections[:, :, 0])
         inter_x1 = torch.min(adv_box[:, :, 2], detections[:, :, 2])
         inter_y0 = torch.max(adv_box[:, :, 1], detections[:, :, 1])
         inter_y1 = torch.min(adv_box[:, :, 3], detections[:, :, 3])
         adv_atts = torch.sum((inter_y1 - inter_y0) *
                          (inter_x1 - inter_x0) *
-                         detections[:, :, 4], dim=1)
+                         detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
         att_loss = -adv_atts.sum() * 2 + atts.sum()
         # for attention, detection in zip(attentions, detections.clone().detach()):
         #     for det in detection:
