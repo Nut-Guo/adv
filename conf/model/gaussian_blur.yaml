@@ -34,9 +34,9 @@ patch_transformer:
     affine:
       _target_: torchvision.transforms.RandomAffine
       degrees: 30
-      translate:
-        - 0.25
-        - 0.25
+#      translate:
+#        - 0.25
+#        - 0.25
       scale:
         - 0.8
         - 1.2
