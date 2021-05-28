@@ -89,7 +89,7 @@ class PatchNet(pl.LightningModule):
             self.logger.agg_and_log_metrics({"success_rate": 1})
         adv_mask = adv_batch != 0
         with torch.no_grad():
-            attentions = torch.zeros_like(image_batch[0], requires_grad=False)
+            attentions = torch.zeros_like(image_batch, requires_grad=False)
             for attention, detection in zip(attentions, detections.clone().detach()):
                 for det in detection:
                     attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
