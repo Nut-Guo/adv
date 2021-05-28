@@ -140,17 +140,17 @@ class PatchNet(pl.LightningModule):
             #         "class_labels": {i: j for i, j in enumerate(NAMES)},
             #     }
             # }
-            attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
-            plt.axis('off')
-            attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
-            plt.colorbar()
+            # attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
+            # plt.axis('off')
+            # attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
+            # plt.colorbar()
 
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
                 'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
-                'attention_map': attention_map
+                'attention_map': attentions
             },
                 commit=False)
         loss = det_loss + tv_loss #  + attention_loss
