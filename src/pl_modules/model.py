@@ -90,7 +90,7 @@ class PatchNet(pl.LightningModule):
         adv_mask = adv_batch != 0
         # shape = image_batch.shape
         with torch.no_grad():
-            attentions = torch.zeros_like(image_batch[:,0,:,:], requires_grad=False)
+            attentions = torch.zeros_like(image_batch[:,0,:,:], requires_grad=False).permute(0, 2, 3, 1)
             for attention, detection in zip(attentions, detections.clone().detach()):
                 for det in detection:
                     attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
