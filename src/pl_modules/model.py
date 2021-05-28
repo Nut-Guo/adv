@@ -150,7 +150,7 @@ class PatchNet(pl.LightningModule):
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
                 'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
-                'attention_map': attentions
+                'attention_map': wandb.Image(attentions.clone().detach())
             },
                 commit=False)
         loss = det_loss + tv_loss #  + attention_loss
