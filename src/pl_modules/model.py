@@ -89,7 +89,6 @@ class PatchNet(pl.LightningModule):
             self.logger.agg_and_log_metrics({"success_rate": 1})
         adv_mask = adv_batch != 0
         adv_box = mask2bbox(adv_mask).expand_as(detections[:,:,:4])
-        print(adv_box.shape)
         # with torch.no_grad():
         # orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
         # attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
