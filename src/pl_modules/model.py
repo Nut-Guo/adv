@@ -67,7 +67,7 @@ class PatchNet(pl.LightningModule):
         bboxes = batch['boxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
-            # gt = self.yolo(image_batch)
+            gt = self.yolo(image_batch)
             # gt_output = self.pred_extractor(gt)
         adv_batch = self.patch_transformer(self.patch, bboxes)  # batch['boxes'])
         patched_batch = self.patch_applier(image_batch, adv_batch)
@@ -140,14 +140,19 @@ class PatchNet(pl.LightningModule):
             # attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
             # plt.colorbar()
             with torch.no_grad():
+                orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
                 attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
                 for attention, detection in zip(attentions, detections.clone().detach()):
+                    for det in detection:
+                        attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
+                for attention, detection in zip(orig_attentions, gt.clone().detach()):
                     for det in detection:
                         attention[int(det[0]): int(det[2]), int(det[1]): int(det[3])] += det[4]
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
+                'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
                 'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
                 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
