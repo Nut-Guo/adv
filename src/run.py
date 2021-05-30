@@ -129,14 +129,23 @@ def run(cfg: DictConfig) -> None:
     hydra.utils.log.info(f"Instantiating the Trainer")
 
     # The Lightning core, the Trainer
-    trainer = pl.Trainer(
+    # trainer = pl.Trainer(
+    #     default_root_dir=hydra_dir,
+    #     logger=wandb_logger,
+    #     callbacks=callbacks,
+    #     deterministic=cfg.train.deterministic,
+    #     val_check_interval=cfg.logging.val_check_interval,
+    #     progress_bar_refresh_rate=cfg.logging.progress_bar_refresh_rate,
+    #     **cfg.train.pl_trainer,
+    # )
+    trainer: pl.Trainer = hydra.utils.instantiate(
+        cfg.train.pl_trainer,
         default_root_dir=hydra_dir,
         logger=wandb_logger,
         callbacks=callbacks,
         deterministic=cfg.train.deterministic,
         val_check_interval=cfg.logging.val_check_interval,
         progress_bar_refresh_rate=cfg.logging.progress_bar_refresh_rate,
-        **cfg.train.pl_trainer,
     )
     log_hyperparameters(trainer=trainer, model=model, cfg=cfg)
 

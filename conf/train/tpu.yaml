@@ -9,6 +9,7 @@ pl_trainer:
   _target_: pytorch_lightning.Trainer
   fast_dev_run: False # Enable this for debug purposes
   precision: 32
+  tpu_cores: 8
   accumulate_grad_batches: 1
   num_sanity_val_steps: 2
   gradient_clip_val: 10.0
