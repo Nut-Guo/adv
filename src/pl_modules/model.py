@@ -63,7 +63,6 @@ class PatchNet(pl.LightningModule):
 
         raise NotImplementedError
 
-    @staticmethod
     def get_boxes(self, detections):
         # for boxes, classprobs in zip(detections['boxes'], detections['classprobs']):
         #     print(boxes, classprobs)
@@ -196,10 +195,10 @@ class PatchNet(pl.LightningModule):
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
                 'orig_image': [wandb.Image(image, boxes=boxes) for image, boxes in zip(image_batch.clone().detach(),
-                                                                                       PatchNet.get_boxes(gt_output))],
+                                                                                       self.get_boxes(gt_output))],
                 # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
                 'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(),
-                                                                                        PatchNet.get_boxes(pred))]  # boxes=patched_boxes)
+                                                                                        self.get_boxes(pred))]  # boxes=patched_boxes)
                 # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)

@@ -102,7 +102,6 @@ class PredExtractor(nn.Module):
         classprobs, labels = torch.max(classprobs, -1)
         return {'boxes': boxes, 'scores': scores, 'classprobs': classprobs, 'labels': labels}
 
-    @staticmethod
     def filter_detections(self, detections: Dict[str, Tensor], confidence_threshold: float = 0.2,
                           nms_threshold: float = 0.45, max_predictions_per_image: int = -1,
                           target_class: str = None) -> Dict[str, List[Tensor]]:
@@ -176,8 +175,8 @@ class PredExtractor(nn.Module):
         return {'boxes': out_boxes, 'scores': out_scores, 'classprobs': out_classprobs, 'labels': out_labels}
 
     def forward(self, detection):
-        detections = PredExtractor.split_detections(detection)
-        detections = PredExtractor.filter_detections(detections, target_class=self.target_class)
+        detections = self.split_detections(detection)
+        detections = self.filter_detections(detections, target_class=self.target_class)
         return detections
 
 
