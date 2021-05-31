@@ -64,7 +64,7 @@ class PatchNet(pl.LightningModule):
         raise NotImplementedError
 
     @staticmethod
-    def get_boxes(detections):
+    def get_boxes(self, detections):
         # for boxes, classprobs in zip(detections['boxes'], detections['classprobs']):
         #     print(boxes, classprobs)
         boxes = [{
