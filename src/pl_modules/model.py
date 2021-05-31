@@ -63,13 +63,39 @@ class PatchNet(pl.LightningModule):
 
         raise NotImplementedError
 
+    @staticmethod
+    def get_boxes(self, detections):
+        boxes = [{
+            "predictions": {
+                "box_data": [{
+                    "position": {
+                        "minX": box[0].item(),
+                        "maxX": box[2].item(),
+                        "minY": box[1].item(),
+                        "maxY": box[3].item(),
+                    },
+                    "class_id": int(label),
+                    "scores": {
+                        "prob": classprob.item()
+                    },
+                    "domain": "pixel",
+                    "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
+                }
+                    for label, box, classprob in
+                    zip([0 for _ in range(boxes)], boxes, classprobs)
+                ],
+                "class_labels": {i: j for i, j in enumerate(NAMES)},
+            }
+        } for boxes, classprobs in zip(detections['boxes'], detections['classprobs'])]
+        return boxes
+
     def step(self, batch: Any, batch_idx: int):
         image_batch = batch['image'][0]
         bboxes = batch['boxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
             gt = self.yolo(image_batch)
-            # gt_output = self.pred_extractor(gt)
+            gt_output = self.pred_extractor(gt)
         adv_batch = self.patch_transformer(self.patch, bboxes)  # gt_output['boxes'])  # batch['boxes'])
         patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
@@ -104,48 +130,48 @@ class PatchNet(pl.LightningModule):
         att_loss = atts.sum()  # - adv_atts.sum()
         if batch_idx % self.log_interval == 0:
             if self.log_att:
-                origin_boxes = {
-                    "predictions": {
-                        "box_data": [{
-                            "position": {
-                                "minX": box[0].item(),
-                                "maxX": box[2].item(),
-                                "minY": box[1].item(),
-                                "maxY": box[3].item(),
-                            },
-                            "class_id": int(label),
-                            "scores": {
-                                "prob": classprob.item()
-                            },
-                            "domain": "pixel",
-                            "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
-                        }
-                            for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
-                        ],
-                        "class_labels": {i: j for i, j in enumerate(NAMES)},
-                    }
-                }
-                patched_boxes = {
-                    "predictions": {
-                        "box_data": [{
-                            "position": {
-                                "minX": box[0].item(),
-                                "maxX": box[2].item(),
-                                "minY": box[1].item(),
-                                "maxY": box[3].item(),
-                            },
-                            "class_id": int(label.item()),
-                            "scores": {
-                                "prob": classprob.item()
-                            },
-                            "domain": "pixel",
-                            "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
-                        }
-                            for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
-                        ],
-                        "class_labels": {i: j for i, j in enumerate(NAMES)},
-                    }
-                }
+                # origin_boxes = {
+                #     "predictions": {
+                #         "box_data": [{
+                #             "position": {
+                #                 "minX": box[0].item(),
+                #                 "maxX": box[2].item(),
+                #                 "minY": box[1].item(),
+                #                 "maxY": box[3].item(),
+                #             },
+                #             "class_id": int(label),
+                #             "scores": {
+                #                 "prob": classprob.item()
+                #             },
+                #             "domain": "pixel",
+                #             "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
+                #         }
+                #             for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
+                #         ],
+                #         "class_labels": {i: j for i, j in enumerate(NAMES)},
+                #     }
+                # }
+                # patched_boxes = {
+                #     "predictions": {
+                #         "box_data": [{
+                #             "position": {
+                #                 "minX": box[0].item(),
+                #                 "maxX": box[2].item(),
+                #                 "minY": box[1].item(),
+                #                 "maxY": box[3].item(),
+                #             },
+                #             "class_id": int(label.item()),
+                #             "scores": {
+                #                 "prob": classprob.item()
+                #             },
+                #             "domain": "pixel",
+                #             "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
+                #         }
+                #             for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
+                #         ],
+                #         "class_labels": {i: j for i, j in enumerate(NAMES)},
+                #     }
+                # }
                 # with torch.no_grad():
                 orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
                 attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
@@ -167,9 +193,9 @@ class PatchNet(pl.LightningModule):
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
-                'orig_image': wandb.Image(image_batch.clone().detach()),   # boxes=origin_boxes),
+                'orig_image': [wandb.Image(image, boxes=boxes) for image, boxes in zip(image_batch.clone().detach(), self.get_boxes(gt_output))],
                 # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
-                'patched_img': wandb.Image(patched_batch.clone().detach()),  # boxes=patched_boxes)
+                'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(), self.get_boxes(detections))]  # boxes=patched_boxes)
                 # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
