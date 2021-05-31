@@ -18,11 +18,12 @@ import matplotlib.pyplot as plt
 
 class PatchNet(pl.LightningModule):
     def __init__(self, yolo_version, patch_size=100, init_patch='random', alpha=0.1, log_interval=100, patch_transformer=None,
-                 pred_extractor=None, thresh_hold=0.5,  *args, **kwargs) -> None:
+                 pred_extractor=None, thresh_hold=0.5, log_att=False,  *args, **kwargs) -> None:
         super().__init__()
         self.yolo, self.yolo_config = get_yolo(yolo_version)
         self.patch_applier = PatchApplier()
         self.alpha = alpha
+        self.log_att = log_att
         self.thresh_hold = thresh_hold
         self.patch_transformer = patch_transformer
         self.pred_extractor = pred_extractor
@@ -67,7 +68,7 @@ class PatchNet(pl.LightningModule):
         bboxes = batch['boxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
-            # gt = self.yolo(image_batch)
+            gt = self.yolo(image_batch)
             # gt_output = self.pred_extractor(gt)
         adv_batch = self.patch_transformer(self.patch, bboxes)  # gt_output['boxes'])  # batch['boxes'])
         patched_batch = self.patch_applier(image_batch, adv_batch)
@@ -101,64 +102,65 @@ class PatchNet(pl.LightningModule):
         #                  (inter_x1 - inter_x0) *
         #                  detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
         att_loss = atts.sum()  # - adv_atts.sum()
-        # with torch.no_grad():
-        # orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-        # attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-        # for attention, detection in zip(attentions, detections.clone().detach()):
-        #     for det in detection:
-        #         attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-        # with torch.no_grad():
-        #     for attention, detection in zip(orig_attentions, gt.clone().detach()):
-        #         for det in detection:
-        #             attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-
-        # adv_attention = attentions[adv_mask]
-        # image_attention = attentions[~adv_mask]
-        # attention_loss = image_attention.sum() - adv_attention.sum()
         if batch_idx % self.log_interval == 0:
-            # origin_boxes = {
-            #     "predictions": {
-            #         "box_data": [{
-            #             "position": {
-            #                 "minX": box[0].item(),
-            #                 "maxX": box[2].item(),
-            #                 "minY": box[1].item(),
-            #                 "maxY": box[3].item(),
-            #             },
-            #             "class_id": int(label),
-            #             "scores": {
-            #                 "prob": classprob.item()
-            #             },
-            #             "domain": "pixel",
-            #             "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
-            #         }
-            #             for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
-            #         ],
-            #         "class_labels": {i: j for i, j in enumerate(NAMES)},
-            #     }
-            # }
-            # patched_boxes = {
-            #     "predictions": {
-            #         "box_data": [{
-            #             "position": {
-            #                 "minX": box[0].item(),
-            #                 "maxX": box[2].item(),
-            #                 "minY": box[1].item(),
-            #                 "maxY": box[3].item(),
-            #             },
-            #             "class_id": int(label.item()),
-            #             "scores": {
-            #                 "prob": classprob.item()
-            #             },
-            #             "domain": "pixel",
-            #             "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
-            #         }
-            #             for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
-            #         ],
-            #         "class_labels": {i: j for i, j in enumerate(NAMES)},
-            #     }
-            # }
-            # attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
+            if self.log_att:
+                origin_boxes = {
+                    "predictions": {
+                        "box_data": [{
+                            "position": {
+                                "minX": box[0].item(),
+                                "maxX": box[2].item(),
+                                "minY": box[1].item(),
+                                "maxY": box[3].item(),
+                            },
+                            "class_id": int(label),
+                            "scores": {
+                                "prob": classprob.item()
+                            },
+                            "domain": "pixel",
+                            "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
+                        }
+                            for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
+                        ],
+                        "class_labels": {i: j for i, j in enumerate(NAMES)},
+                    }
+                }
+                patched_boxes = {
+                    "predictions": {
+                        "box_data": [{
+                            "position": {
+                                "minX": box[0].item(),
+                                "maxX": box[2].item(),
+                                "minY": box[1].item(),
+                                "maxY": box[3].item(),
+                            },
+                            "class_id": int(label.item()),
+                            "scores": {
+                                "prob": classprob.item()
+                            },
+                            "domain": "pixel",
+                            "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
+                        }
+                            for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
+                        ],
+                        "class_labels": {i: j for i, j in enumerate(NAMES)},
+                    }
+                }
+                # with torch.no_grad():
+                orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+                attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+                for attention, detection in zip(attentions, detections.clone().detach()):
+                    for det in detection:
+                        attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+                with torch.no_grad():
+                    for attention, detection in zip(orig_attentions, gt.clone().detach()):
+                        for det in detection:
+                            attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+                attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
+                self.logger.experiment.log({
+                    'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
+                    'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
+                })
             # plt.axis('off')
             # attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
             # plt.colorbar()
