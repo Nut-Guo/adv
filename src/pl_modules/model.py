@@ -199,7 +199,7 @@ class PatchNet(pl.LightningModule):
                 # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
                 'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(),
                                                                                         self.get_boxes(pred))],  # boxes=patched_boxes)
-                'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
+                # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
         loss = det_loss + tv_loss + att_loss#  + attention_loss
