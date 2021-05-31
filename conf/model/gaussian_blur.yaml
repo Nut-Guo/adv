@@ -48,5 +48,6 @@ patch_transformer:
 pred_extractor:
   _target_: src.pl_modules.yolo.PredExtractor
   target_class: 'person'
+  use_tpu: True
 
 
