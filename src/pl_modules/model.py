@@ -193,9 +193,11 @@ class PatchNet(pl.LightningModule):
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
-                'orig_image': [wandb.Image(image, boxes=boxes) for image, boxes in zip(image_batch.clone().detach(), self.get_boxes(gt_output))],
+                'orig_image': [wandb.Image(image, boxes=boxes) for image, boxes in zip(image_batch.clone().detach(),
+                                                                                       PatchNet.get_boxes(gt_output))],
                 # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
-                'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(), self.get_boxes(detections))]  # boxes=patched_boxes)
+                'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(),
+                                                                                        PatchNet.get_boxes(detections))]  # boxes=patched_boxes)
                 # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
