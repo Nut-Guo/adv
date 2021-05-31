@@ -190,6 +190,8 @@ class PatchNet(pl.LightningModule):
             # plt.axis('off')
             # attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
             # plt.colorbar()
+            print(gt_output)
+            print(pred)
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
