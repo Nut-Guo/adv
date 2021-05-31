@@ -62,7 +62,13 @@ NAMES, NAME2ID = get_names()
 
 def tpu_nms(cls_boxes, cls_scores, nms_threshold):
     from torch_xla.core.functions import nms
-    return nms(cls_boxes, cls_scores, 0, nms_threshold, 0xffff)
+    import torch_xla.core.xla_model as xm
+    xla_device = xm.xla_device()
+    score_threshold = torch.tensor(
+        0, dtype=torch.float).to(xla_device)
+    iou_threshold = torch.tensor(
+        nms_threshold, dtype=torch.float).to(xla_device)
+    return nms(cls_boxes, cls_scores, score_threshold, iou_threshold, 0xffff)
 
 
 class PredExtractor(nn.Module):
