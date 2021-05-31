@@ -83,7 +83,9 @@ class PredExtractor(nn.Module):
         self.target_class = target_class
         if use_tpu:
             nms = tpu_nms
-        self.nms = vision_nms
+        else:
+            nms = vision_nms
+        self.nms = nms
 
     def split_detections(self, detections: Tensor) -> Dict[str, Tensor]:
         """
