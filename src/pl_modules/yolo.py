@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Type
 import torch
 from torch import Tensor
 from torch import nn
-from torchvision.ops import nms
+from torchvision.ops import nms as vision_nms
 from src.common.utils import MODEL_PATH
 from src.common.download import download_data
 from src.pl_modules.yolo_module import YOLO
@@ -83,7 +83,7 @@ class PredExtractor(nn.Module):
         self.target_class = target_class
         if use_tpu:
             nms = tpu_nms
-        self.nms = nms
+        self.nms = vision_nms
 
     def split_detections(self, detections: Tensor) -> Dict[str, Tensor]:
         """
