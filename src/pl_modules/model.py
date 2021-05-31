@@ -65,8 +65,8 @@ class PatchNet(pl.LightningModule):
 
     @staticmethod
     def get_boxes(detections):
-        print(detections['boxes'])
-        print(detections['classprobs'])
+        print(detections['boxes'][0])
+        print(detections['classprobs'][0])
         boxes = [{
             "predictions": {
                 "box_data": [{
