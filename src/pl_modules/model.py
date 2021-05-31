@@ -67,7 +67,7 @@ class PatchNet(pl.LightningModule):
     def get_boxes(detections):
         # print(detections['boxes'][0])
         # print(detections['classprobs'][0])
-        size = detections['boxes'].shape[0]
+        size = len(detections['boxes'])
         boxes = [{
             "predictions": {
                 "box_data": [{
