@@ -144,6 +144,7 @@ class PredExtractor(nn.Module):
         for img_boxes, img_scores, img_classprobs, img_labels in zip(boxes, scores, classprobs, labels):
             # Select detections with high confidence score.
             selected = img_scores > confidence_threshold
+            print("check1")
             if target_class:
                 selected = selected.logical_and(img_labels == NAME2ID[target_class])
             img_boxes = img_boxes[selected]
@@ -159,6 +160,7 @@ class PredExtractor(nn.Module):
             # Iterate through the unique object classes detected in the image and perform non-maximum
             # suppression for the objects of the class in question.
             for cls_label in labels.unique():
+                print("check2")
                 selected = img_labels == cls_label
                 cls_boxes = img_boxes[selected]
                 cls_scores = img_scores[selected]
@@ -174,7 +176,6 @@ class PredExtractor(nn.Module):
             # Sort by descending confidence and limit the maximum number of predictions.
             indices = torch.argsort(img_out_scores, descending=True)
             if max_predictions_per_image >= 0:
-                max_predictions_per_image = torch.LongTensor(max_predictions_per_image).to(indices.device)
                 indices = indices[:max_predictions_per_image]
             out_boxes.append(img_out_boxes[indices])
             out_scores.append(img_out_scores[indices])
