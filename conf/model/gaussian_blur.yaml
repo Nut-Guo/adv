@@ -8,6 +8,7 @@ patch_size:
   - 225
   - 400
 thresh_hold: 0.5
+log_att: True
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   image_size: 416
