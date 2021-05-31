@@ -68,7 +68,8 @@ def tpu_nms(cls_boxes, cls_scores, nms_threshold):
         0, dtype=torch.float).to(xla_device)
     iou_threshold = torch.tensor(
         nms_threshold, dtype=torch.float).to(xla_device)
-    return nms(cls_boxes, cls_scores, score_threshold, iou_threshold, len(cls_boxes))
+    selected, num =  nms(cls_boxes, cls_scores, score_threshold, iou_threshold, len(cls_boxes))
+    return selected
 
 
 class PredExtractor(nn.Module):
