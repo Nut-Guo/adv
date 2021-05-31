@@ -69,7 +69,7 @@ def tpu_nms(cls_boxes, cls_scores, nms_threshold):
     iou_threshold = torch.tensor(
         nms_threshold, dtype=torch.float).to(xla_device)
     selected, num = nms(cls_boxes, cls_scores, score_threshold, iou_threshold, len(cls_boxes))
-    print(selected, num)
+    # print(selected, num)
     return selected
 
 
@@ -145,7 +145,7 @@ class PredExtractor(nn.Module):
         for img_boxes, img_scores, img_classprobs, img_labels in zip(boxes, scores, classprobs, labels):
             # Select detections with high confidence score.
             selected = img_scores > confidence_threshold
-            print("check1")
+            # print("check1")
             if target_class:
                 selected = selected.logical_and(img_labels == NAME2ID[target_class])
             img_boxes = img_boxes[selected]
@@ -161,7 +161,7 @@ class PredExtractor(nn.Module):
             # Iterate through the unique object classes detected in the image and perform non-maximum
             # suppression for the objects of the class in question.
             for cls_label in labels.unique():
-                print("check2")
+                # print("check2")
                 selected = (img_labels == cls_label).type(torch.bool)
                 cls_boxes = img_boxes[selected]
                 cls_scores = img_scores[selected]
@@ -175,7 +175,7 @@ class PredExtractor(nn.Module):
                 img_out_labels = torch.cat((img_out_labels, cls_labels[selected]))
 
             # Sort by descending confidence and limit the maximum number of predictions.
-            print("check3")
+            # print("check3")
             indices = torch.argsort(img_out_scores, descending=True)
             if max_predictions_per_image >= 0:
                 indices = indices[:max_predictions_per_image]
