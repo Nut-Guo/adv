@@ -65,9 +65,8 @@ class PatchNet(pl.LightningModule):
 
     @staticmethod
     def get_boxes(detections):
-        # print(detections['boxes'][0])
-        # print(detections['classprobs'][0])
-        size = len(detections['boxes'])
+        for boxes, classprobs in zip(detections['boxes'], detections['classprobs']):
+            print(boxes)
         boxes = [{
             "predictions": {
                 "box_data": [{
@@ -85,11 +84,11 @@ class PatchNet(pl.LightningModule):
                     "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
                 }
                     for label, box, classprob in
-                    zip([0 for _ in range(detections['boxes'][k])], detections['boxes'][k], detections['classprobs'][k])
+                    zip([0 for _ in range(boxes)], boxes, classprobs)
                 ],
                 "class_labels": {i: j for i, j in enumerate(NAMES)},
             }
-        } for k in range(size)]#boxes, classprobs in zip(detections['boxes'], detections['classprobs'])]
+        } for boxes, classprobs in zip(detections['boxes'], detections['classprobs'])]
         return boxes
 
     def step(self, batch: Any, batch_idx: int):
