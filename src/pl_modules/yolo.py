@@ -62,7 +62,7 @@ NAMES, NAME2ID = get_names()
 
 def tpu_nms(cls_boxes, cls_scores, nms_threshold):
     from torch_xla.core.functions import nms
-    return nms(cls_boxes, cls_scores, 0, nms_threshold)
+    return nms(cls_boxes, cls_scores, 0, nms_threshold, 0xffff)
 
 
 class PredExtractor(nn.Module):
