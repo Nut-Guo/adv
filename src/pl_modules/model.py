@@ -95,8 +95,8 @@ class PatchNet(pl.LightningModule):
         bboxes = batch['boxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
-            gt = self.yolo(image_batch)
-            gt_output = self.pred_extractor(gt)
+            # gt = self.yolo(image_batch)
+            # gt_output = self.pred_extractor(gt)
         adv_batch = self.patch_transformer(self.patch, bboxes)  # gt_output['boxes'])  # batch['boxes'])
         patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
@@ -179,10 +179,10 @@ class PatchNet(pl.LightningModule):
                 for attention, detection in zip(attentions, detections.clone().detach()):
                     for det in detection:
                         attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-                with torch.no_grad():
-                    for attention, detection in zip(orig_attentions, gt.clone().detach()):
-                        for det in detection:
-                            attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+                # with torch.no_grad():
+                #     for attention, detection in zip(orig_attentions, gt.clone().detach()):
+                #         for det in detection:
+                #             attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
                 attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
                 self.logger.experiment.log({
                     'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
@@ -194,12 +194,12 @@ class PatchNet(pl.LightningModule):
             self.logger.experiment.log({
                 'patch': wandb.Image(self.patch.clone().detach()),
                 #'adv_patch': wandb.Image(adv_batch.clone().detach()),   # boxes=origin_boxes),
-                # 'orig_image': [wandb.Image(image, boxes=boxes) for image, boxes in zip(image_batch.clone().detach(),
-                #                                                                        self.get_boxes(gt_output))],
+                'orig_image': [wandb.Image(image, boxes=boxes) for image, boxes in zip(image_batch.clone().detach(),
+                                                                                       self.get_boxes(gt_output))],
                 # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
-                # 'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(),
-                #                                                                         self.get_boxes(pred))]  # boxes=patched_boxes)
-                # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
+                'patched_img': [wandb.Image(image, boxes=boxes) for image, boxes in zip(patched_batch.clone().detach(),
+                                                                                        self.get_boxes(pred))],  # boxes=patched_boxes)
+                'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
         loss = det_loss + tv_loss + att_loss#  + attention_loss
