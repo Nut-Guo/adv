@@ -161,7 +161,7 @@ class PredExtractor(nn.Module):
             # suppression for the objects of the class in question.
             for cls_label in labels.unique():
                 print("check2")
-                selected = img_labels == cls_label
+                selected = (img_labels == cls_label).type(torch.bool)
                 cls_boxes = img_boxes[selected]
                 cls_scores = img_scores[selected]
                 cls_classprobs = img_classprobs[selected]
