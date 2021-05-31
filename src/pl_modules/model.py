@@ -66,7 +66,7 @@ class PatchNet(pl.LightningModule):
     @staticmethod
     def get_boxes(detections):
         for boxes, classprobs in zip(detections['boxes'], detections['classprobs']):
-            print(boxes)
+            print(boxes, detections)
         boxes = [{
             "predictions": {
                 "box_data": [{
@@ -81,7 +81,7 @@ class PatchNet(pl.LightningModule):
                         "prob": classprob.item()
                     },
                     "domain": "pixel",
-                    "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
+                    # "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
                 }
                     for label, box, classprob in
                     zip([0 for _ in range(boxes)], boxes, classprobs)
