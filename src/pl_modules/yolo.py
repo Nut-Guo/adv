@@ -79,7 +79,6 @@ class PredExtractor(nn.Module):
             nms = tpu_nms
         self.nms = nms
 
-    @staticmethod
     def split_detections(self, detections: Tensor) -> Dict[str, Tensor]:
         """
         Splits the detection tensor returned by a forward pass into a dictionary.
