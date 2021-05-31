@@ -84,11 +84,11 @@ class PatchNet(pl.LightningModule):
                     "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
                 }
                     for label, box, classprob in
-                    zip([0 for _ in range(boxes)], boxes, classprobs)
+                    zip([0 for _ in range(detections['boxes'][k])], detections['boxes'][k], detections['classprobs'][k])
                 ],
                 "class_labels": {i: j for i, j in enumerate(NAMES)},
             }
-        } for boxes, classprobs in zip(detections['boxes'], detections['classprobs'])]
+        } for k in range(len(detections['boxes']))]#boxes, classprobs in zip(detections['boxes'], detections['classprobs'])]
         return boxes
 
     def step(self, batch: Any, batch_idx: int):
