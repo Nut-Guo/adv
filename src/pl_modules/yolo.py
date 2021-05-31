@@ -174,6 +174,7 @@ class PredExtractor(nn.Module):
             # Sort by descending confidence and limit the maximum number of predictions.
             indices = torch.argsort(img_out_scores, descending=True)
             if max_predictions_per_image >= 0:
+                max_predictions_per_image = torch.LongTensor(max_predictions_per_image).to(indices.device)
                 indices = indices[:max_predictions_per_image]
             out_boxes.append(img_out_boxes[indices])
             out_scores.append(img_out_scores[indices])
