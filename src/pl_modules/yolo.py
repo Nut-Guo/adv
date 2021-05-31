@@ -174,10 +174,10 @@ class PredExtractor(nn.Module):
                 img_out_labels = torch.cat((img_out_labels, cls_labels[selected]))
 
             # Sort by descending confidence and limit the maximum number of predictions.
+            print("check3")
             indices = torch.argsort(img_out_scores, descending=True)
             if max_predictions_per_image >= 0:
                 indices = indices[:max_predictions_per_image]
-            print("check3")
             out_boxes.append(img_out_boxes[indices])
             out_scores.append(img_out_scores[indices])
             out_classprobs.append(img_out_classprobs[indices])
