@@ -79,6 +79,7 @@ class PredExtractor(nn.Module):
             nms = tpu_nms
         self.nms = nms
 
+    @staticmethod
     def split_detections(detections: Tensor) -> Dict[str, Tensor]:
         """
         Splits the detection tensor returned by a forward pass into a dictionary.
@@ -101,6 +102,7 @@ class PredExtractor(nn.Module):
         classprobs, labels = torch.max(classprobs, -1)
         return {'boxes': boxes, 'scores': scores, 'classprobs': classprobs, 'labels': labels}
 
+    @staticmethod
     def filter_detections(detections: Dict[str, Tensor], confidence_threshold: float = 0.2,
                           nms_threshold: float = 0.45, max_predictions_per_image: int = -1,
                           target_class: str = None) -> Dict[str, List[Tensor]]:
