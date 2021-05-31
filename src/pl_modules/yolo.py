@@ -168,7 +168,7 @@ class PredExtractor(nn.Module):
                 cls_classprobs = img_classprobs[selected]
                 cls_labels = img_labels[selected]
 
-                selected = self.nms(cls_boxes, cls_scores, nms_threshold)
+                selected = self.nms(cls_boxes, cls_scores, nms_threshold).type(torch.long)
                 img_out_boxes = torch.cat((img_out_boxes, cls_boxes[selected]))
                 img_out_scores = torch.cat((img_out_scores, cls_scores[selected]))
                 img_out_classprobs = torch.cat((img_out_classprobs, cls_classprobs[selected]))
