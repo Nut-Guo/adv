@@ -131,49 +131,6 @@ class PatchNet(pl.LightningModule):
         att_loss = atts.sum()  # - adv_atts.sum()
         if batch_idx % self.log_interval == 0:
             if self.log_att:
-                # origin_boxes = {
-                #     "predictions": {
-                #         "box_data": [{
-                #             "position": {
-                #                 "minX": box[0].item(),
-                #                 "maxX": box[2].item(),
-                #                 "minY": box[1].item(),
-                #                 "maxY": box[3].item(),
-                #             },
-                #             "class_id": int(label),
-                #             "scores": {
-                #                 "prob": classprob.item()
-                #             },
-                #             "domain": "pixel",
-                #             "box_caption": "%s (%.3f)" % (NAMES[int(label)], classprob.item())
-                #         }
-                #             for label, box, classprob in zip([0 for _ in range(len(batch['boxes'][0][0]))], batch['boxes'][0][0], batch['classprobs'][0][0])
-                #         ],
-                #         "class_labels": {i: j for i, j in enumerate(NAMES)},
-                #     }
-                # }
-                # patched_boxes = {
-                #     "predictions": {
-                #         "box_data": [{
-                #             "position": {
-                #                 "minX": box[0].item(),
-                #                 "maxX": box[2].item(),
-                #                 "minY": box[1].item(),
-                #                 "maxY": box[3].item(),
-                #             },
-                #             "class_id": int(label.item()),
-                #             "scores": {
-                #                 "prob": classprob.item()
-                #             },
-                #             "domain": "pixel",
-                #             "box_caption": "%s (%.3f)" % (NAMES[int(label.item())], classprob.item())
-                #         }
-                #             for label, box, classprob in zip(pred['labels'][0], pred['boxes'][0], pred['classprobs'][0])
-                #         ],
-                #         "class_labels": {i: j for i, j in enumerate(NAMES)},
-                #     }
-                # }
-                # with torch.no_grad():
                 orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
                 attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
                 for attention, detection in zip(attentions, detections.clone().detach()):
@@ -185,7 +142,7 @@ class PatchNet(pl.LightningModule):
                 #             attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
                 attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
                 self.logger.experiment.log({
-                    'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
+                    # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
                     'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
                 })
             # plt.axis('off')
