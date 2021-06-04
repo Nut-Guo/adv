@@ -12,7 +12,7 @@ log_att: True
 patch_transformer:
   _target_: src.pl_modules.patch.PatchTransformer
   image_size: 416
-  portion: 0.4
+  portion: 0.7
   patch_batch_size: 1
   patch_size:
     - 160

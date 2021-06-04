@@ -9,7 +9,7 @@ datamodule:
       path: ${oc.env:TRAIN_DATASET_PATH}
       image_size: 416
       augment_size: 8
-#      max_size: 1000
+      max_size: 30000
 
     val:
       - _target_: src.pl_data.dataset.PersonDataset
@@ -17,7 +17,7 @@ datamodule:
         path: ${oc.env:VAL_DATASET_PATH}
         image_size: 416
         augment_size: 8
-#        max_size: 100
+        max_size: 10000
 
     test:
       - _target_: src.pl_data.dataset.PersonDataset
@@ -25,7 +25,7 @@ datamodule:
         path: ${oc.env:TEST_DATASET_PATH}
         image_size: 416
         augment_size: 8
-#        max_size: 100
+        max_size: 10000
 
   num_workers:
     train: 2
