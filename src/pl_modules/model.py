@@ -130,21 +130,21 @@ class PatchNet(pl.LightningModule):
         #                  detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
         att_loss = atts.sum()  # - adv_atts.sum()
         if batch_idx % self.log_interval == 0:
-            if self.log_att:
-                orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-                attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
-                for attention, detection in zip(attentions, detections.clone().detach()):
-                    for det in detection:
-                        attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-                # with torch.no_grad():
-                #     for attention, detection in zip(orig_attentions, gt.clone().detach()):
-                #         for det in detection:
-                #             attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
-                attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
-                self.logger.experiment.log({
-                    # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
-                    'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
-                })
+            # if self.log_att:
+            #     # orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+            #     # attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
+            #     # for attention, detection in zip(attentions, detections.clone().detach()):
+            #     #     for det in detection:
+            #     #         attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+            #     # with torch.no_grad():
+            #     #     for attention, detection in zip(orig_attentions, gt.clone().detach()):
+            #     #         for det in detection:
+            #     #             attention[int(det[1]): int(det[3]), int(det[0]): int(det[2])] += det[4]
+            #     attention_img = torchvision.utils.make_grid(attentions).permute(1, 2, 0)
+            #     self.logger.experiment.log({
+            #         # 'orig_attention': wandb.Image(orig_attentions.clone().detach().unsqueeze(dim=1)),
+            #         'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
+            #     })
             # plt.axis('off')
             # attention_map = plt.imshow(attention_img.cpu(), cmap='jet',aspect='auto')
             # plt.colorbar()
@@ -159,8 +159,8 @@ class PatchNet(pl.LightningModule):
                 # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
-        loss = det_loss + tv_loss + att_loss#  + attention_loss
-        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "att_loss": att_loss} #  , "attention_loss": attention_loss}
+        loss = det_loss + tv_loss + att_loss
+        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "att_loss": att_loss}
         return losses
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
