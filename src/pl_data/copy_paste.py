@@ -307,10 +307,14 @@ def copy_paste_class(dataset_class):
             img_data['paste_index'] = paste_idx
         img_data['bboxes'] = torch.tensor(img_data['bboxes'], dtype=torch.float)
         d = img_data['bboxes'][:, :4][img_data['bboxes'][:, 4] == 1]
-        bboxes = torch.stack([d[:,0] - (d[:,2] / 2),
-                              d[:,1] - (d[:,3] / 2),
-                              d[:,0] + (d[:,2] / 2),
-                              d[:,1] + (d[:,3] / 2),]).T
+        # bboxes = torch.stack([d[:,0] - (d[:,2] / 2),
+        #                       d[:,1] - (d[:,3] / 2),
+        #                       d[:,0] + (d[:,2] / 2),
+        #                       d[:,1] + (d[:,3] / 2),]).T
+        bboxes = torch.stack([min(d[:, 1], d[:, 3]),
+                              min(d[:, 0], d[:, 2]),
+                              max(d[:, 1], d[:, 3]),
+                              max(d[:, 0], d[:, 2])]).T
         mask = (d[:,3] - d[:,1]) > 10
         mask = mask.logical_and((d[:,2] - d[:,0]) > 10)
         result = {
