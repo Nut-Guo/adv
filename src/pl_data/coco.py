@@ -56,7 +56,7 @@ class CocoDetectionCP(CocoDetection):
         transforms = A.Compose(transforms)
         ann_file = os.path.join(path, ann_file)
         if not os.path.exists(ann_file):
-            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", ann_file)
+            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", path)
         super(CocoDetectionCP, self).__init__(
             path, ann_file, None, None, transforms
         )
