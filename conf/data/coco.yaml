@@ -10,13 +10,13 @@ datamodule:
       annfile: 'data/annotations/instances_train2017.json'
       transforms:
         random_scale:
-          _target_:albumentations.RandomScale
+          _target_: albumentations.RandomScale
           scale_limit:
             - -0.9
             - 1
           p: 1
         crop:
-          _target:albumentations.RandomSizedBBoxSafeCrop
+          _target_: albumentations.RandomSizedBBoxSafeCrop
           height: 416
           width: 416
           p: 1
