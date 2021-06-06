@@ -6,17 +6,9 @@ import src.pl_data.copy_paste
 from src.pl_data.copy_paste import copy_paste_class
 import skimage.io as io
 import albumentations as A
-from src.pl_modules.yolo import NAME2ID
 from src.common.download import download_data
 from omegaconf import ValueNode
-from pycocotools.coco import COCO
-from torchvision import transforms
-from torch.utils.data import Dataset
-from PIL import Image
-from src.common.utils import PROJECT_ROOT
 from albumentations.pytorch import ToTensor
-import torch
-import cv2
 
 min_keypoints_per_image = 10
 
