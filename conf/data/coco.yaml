@@ -19,7 +19,7 @@ datamodule:
           width: 416
           p: 1
         copy_pase:
-          _target_: src.pl_data.copy_pase.CopyPaste
+          _target_: src.pl_data.copy_paste.CopyPaste
           blend: True
           sigma: 1
           pct_objects_paste: 0.8
