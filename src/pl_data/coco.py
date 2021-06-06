@@ -49,7 +49,7 @@ class CocoDetectionCP(CocoDetection):
 
     ):
         # print(transforms)
-        transforms = A.Compose(transforms.values())
+        transforms = A.Compose(transforms.values(), bbox_params=A.BboxParams(format="coco", min_visibility=0.05))
         # transforms = A.Compose([
         #     A.RandomScale(scale_limit=(-0.9, 1), p=1),  # LargeScaleJitter from scale of 0.1 to 2
         #     # A.PadIfNeeded(408, 408, border_mode=0), #pads with image in the center, not the top left like the paper
