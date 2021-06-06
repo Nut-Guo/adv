@@ -101,13 +101,7 @@ class CocoDetectionCP(CocoDetection):
             'masks': masks,
             'bboxes': bboxes
         }
-        result = self.transforms(**output)
-        boxes_tensor = torch.tensor(result['bboxes'])
-        result = {
-            'image': result['image'],
-            'bboxes': boxes_tensor[boxes_tensor[:, 4] == 1]
-        }
-        return result
+        return self.transforms(**output)
 
 # class CocoDataset(object):
 #     def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, transforms: ValueNode,
