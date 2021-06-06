@@ -81,7 +81,7 @@ class PatchTransformer(nn.Module):
         x2 = x1 + xsize
         y2 = y1 + ysize
         mask = patch != 0
-        base[:, x1:x2, y1:y2] = patch[mask]
+        base[:, x1:x2, y1:y2][mask] = patch[mask]
         return base
 
     def forward(self, adv_patch, boxes_batch):
