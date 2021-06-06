@@ -49,16 +49,16 @@ class CocoDetectionCP(CocoDetection):
         name: ValueNode,
         path: ValueNode,
         image_size: ValueNode,
-        annFile,
+        ann_file,
         transforms: ValueNode, max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person']
 
     ):
         transforms = A.Compose(transforms)
-        annFile = os.path.join(path, annFile)
-        if not os.path.exists(annFile):
-            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", annFile)
+        ann_file = os.path.join(path, ann_file)
+        if not os.path.exists(ann_file):
+            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", ann_file)
         super(CocoDetectionCP, self).__init__(
-            path, annFile, None, None, transforms
+            path, ann_file, None, None, transforms
         )
 
         # filter images without detection annotations
