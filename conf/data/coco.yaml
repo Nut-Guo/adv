@@ -6,7 +6,7 @@ datamodule:
     train:
       _target_: src.pl_data.coco.CocoDetectionCP
       name: PersonDataset
-      root: ''
+      root: ${oc.env:TRAIN_DATASET_PATH}
       path: ${oc.env:TRAIN_DATASET_PATH}
       ann_file: 'data/annotations/instances_train2017.json'
       transforms:
