@@ -90,6 +90,8 @@ class CocoDetectionCP(CocoDetection):
             image = io.imread(os.path.join(self.root, path))
         else:
             image = io.imread(img['coco_url'])
+        assert(image.shape[2] == 3)
+
         # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         #convert all of the target segmentations to masks
