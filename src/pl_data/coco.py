@@ -54,7 +54,7 @@ class CocoDetectionCP(CocoDetection):
 
     ):
         print(transforms)
-        transforms = A.Compose(transforms)
+        transforms = A.Compose(transforms.values())
         ann_file = os.path.join(path, ann_file)
         if not os.path.exists(ann_file):
             download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", path)
