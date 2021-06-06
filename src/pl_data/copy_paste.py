@@ -307,8 +307,10 @@ def copy_paste_class(dataset_class):
             img_data['paste_index'] = paste_idx
         img_data['bboxes'] = torch.tensor(img_data['bboxes'], dtype=torch.float)
         d = img_data['bboxes'][:, :4][img_data['bboxes'][:, 4] == 1]
-        bboxes = torch.stack([d[:,0] - (d[:,2] / 2), d[:,0] + (d[:,2] / 2),
-                              d[:,1] - (d[:,3] / 2), d[:,1] + (d[:,3] / 2)]).T
+        bboxes = torch.stack([d[:,0] - (d[:,2] / 2),
+                              d[:,1] - (d[:,3] / 2),
+                              d[:,0] + (d[:,2] / 2),
+                              d[:,1] + (d[:,3] / 2),]).T
         result = {
             'image': torch.tensor([img_data['image']], dtype=torch.float).permute(0, 3, 1, 2),
             'bboxes': bboxes.unsqueeze(0)
