@@ -8,7 +8,7 @@ datamodule:
       name: PersonDataset
       root: ${oc.env:TRAIN_DATASET_PATH}
       path: ${oc.env:TRAIN_DATASET_PATH}
-      ann_file: 'data/annotations/instances_train2017.json'
+      ann_file: 'annotations/instances_train2017.json'
       transforms:
         random_scale:
           _target_: albumentations.RandomScale

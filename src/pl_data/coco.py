@@ -59,10 +59,11 @@ class CocoDetectionCP(CocoDetection):
         #     ToTensor()
         # ], bbox_params=A.BboxParams(format="coco", min_visibility=0.05)
         # )
-        if not os.path.exists(ann_file):
-            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", 'data')
+        anno_path = os.path.join(root, ann_file)
+        if not os.path.exists(anno_path):
+            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", root)
         super(CocoDetectionCP, self).__init__(
-            root, ann_file, None, None, transforms
+            root, anno_path, None, None, transforms
         )
 
         # filter images without detection annotations
