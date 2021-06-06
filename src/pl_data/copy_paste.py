@@ -309,7 +309,7 @@ def copy_paste_class(dataset_class):
         img_data['bboxes'] = img_data['bboxes'][:, :4][img_data['bboxes'][:, 4] == 1]
         result = {
             'image': torch.tensor([img_data['image']]),
-            'bboxes': img_data['image'].unsqueeze(0)
+            'bboxes': img_data['bboxes'].unsqueeze(0)
         }
         return result
 
