@@ -11,7 +11,7 @@ datamodule:
       transforms:
         random_scale:
           _target_: albumentations.RandomScale
-          scale_limit: (-0.9, 1)
+          scale_limit: 0.9
           p: 1
         crop:
           _target_: albumentations.RandomSizedBBoxSafeCrop
