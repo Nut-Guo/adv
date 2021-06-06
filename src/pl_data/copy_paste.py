@@ -311,8 +311,8 @@ def copy_paste_class(dataset_class):
                               d[:,1] - (d[:,3] / 2),
                               d[:,0] + (d[:,2] / 2),
                               d[:,1] + (d[:,3] / 2),]).T
-        mask = d[:3] - d[:1] > 10
-        mask = mask.logical_and(d[:2] - d[:0] > 10)
+        mask = d[:,3] - d[:,1] > 10
+        mask = mask.logical_and(d[:,2] - d[:,0] > 10)
         result = {
             'image': torch.tensor([img_data['image']], dtype=torch.float).permute(0, 3, 1, 2),
             'bboxes': bboxes[mask].unsqueeze(0)
