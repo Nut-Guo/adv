@@ -51,7 +51,6 @@ class CocoDetectionCP(CocoDetection):
 
     ):
         # print(transforms)
-        transforms['totensor'] = ToTensor()
         transforms = A.Compose(transforms.values(), bbox_params=A.BboxParams(format="coco", min_visibility=0.05))
         # transforms = A.Compose([
         #     A.RandomScale(scale_limit=(-0.9, 1), p=1),  # LargeScaleJitter from scale of 0.1 to 2
