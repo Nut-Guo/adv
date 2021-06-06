@@ -92,7 +92,7 @@ class PatchNet(pl.LightningModule):
 
     def step(self, batch: Any, batch_idx: int):
         image_batch = batch['image'][0]
-        bboxes = batch['boxes'][0]
+        bboxes = batch['bboxes'][0]
         with torch.no_grad():
             self.patch.data = self.patch.data.clamp(0.001, 0.999)
             gt = self.yolo(image_batch)

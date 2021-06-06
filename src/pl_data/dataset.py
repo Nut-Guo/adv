@@ -101,7 +101,7 @@ class PersonDataset(object):
         # print(transformed)
         return {
             "image": torch.stack(imgs),#transformed["image"],
-            "boxes": torch.stack(bboxes),#torch.tensor(transformed["bboxes"]) * self.image_size,
+            "bboxes": torch.stack(bboxes),#torch.tensor(transformed["bboxes"]) * self.image_size,
             "classprobs": torch.stack(probs)#torch.tensor(transformed["probs"])
         }
 

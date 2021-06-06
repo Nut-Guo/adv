@@ -1,0 +1,59 @@
+
+datamodule:
+  _target_: src.pl_data.datamodule.ImageDataModule
+
+  datasets:
+    train:
+      _target_: src.pl_data.coco.CocoDetectionCP
+      name: PersonDataset
+      root: ${oc.env:TRAIN_DATASET_PATH}
+      annfile: 'data/annotations/instances_train2017.json'
+      transforms:
+        random_scale:
+          _target_:albumentations.RandomScale
+          scale_limit:
+            - -0.9
+            - 1
+          p: 1
+        crop:
+          _target:albumentations.RandomSizedBBoxSafeCrop
+          height: 416
+          width: 416
+          p: 1
+        copy_pase:
+          _target_: src.pl_data.copy_pase.CopyPaste
+          blend: True
+          sigma: 1
+          pct_objects_paste: 0.8
+          p: 1
+      image_size: 416
+      augment_size: 1
+      max_size: 30000
+      filter_classes:
+        - 'person'
+
+    val:
+      - _target_: src.pl_data.dataset.PersonDataset
+        name: PersonDataset
+        path: ${oc.env:VAL_DATASET_PATH}
+        image_size: 416
+        augment_size: 1
+        max_size: 1000
+
+    test:
+      - _target_: src.pl_data.dataset.PersonDataset
+        name: PersonDataset
+        path: ${oc.env:TEST_DATASET_PATH}
+        image_size: 416
+        augment_size: 1
+        max_size: 1000
+
+  num_workers:
+    train: 2
+    val: 2
+    test: 2
+
+  batch_size:
+    train: 1
+    val: 1
+    test: 1

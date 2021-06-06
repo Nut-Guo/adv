@@ -1,0 +1,5 @@
+export TRAIN_DATASET_PATH="/content/adv/data"
+export VAL_DATASET_PATH="/content/adv/data/LIP/Images/val_images"
+export TEST_DATASET_PATH="/content/adv/data/LIP/Images/testing_images"
+export PROJECT_ROOT=/content/adv
+export MODEL_PATH="/content/adv/model"
