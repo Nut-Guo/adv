@@ -248,7 +248,7 @@ class CopyPaste(A.DualTransform):
 def copy_paste_class(dataset_class):
     def _split_transforms(self):
         split_index = None
-        for ix, tf in enumerate(list(self.transforms.transforms)):
+        for ix, tf in enumerate(list(self.transforms)):
             if tf.get_class_fullname() == 'copypaste.CopyPaste':
                 split_index = ix
 
