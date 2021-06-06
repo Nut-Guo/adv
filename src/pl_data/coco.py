@@ -73,8 +73,8 @@ class CocoDetectionCP(CocoDetection):
 
         # filter images without detection annotations
         ids = []
-        catIds = self.coco.getCatIds(catNms=filter_classes)
-        self.ids = self.coco.getImgIds(catIds=catIds)
+        # catIds = self.coco.getCatIds(catNms=filter_classes)
+        # self.ids = self.coco.getImgIds(catIds=catIds)
         for img_id in self.ids:
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
             anno = self.coco.loadAnns(ann_ids)
