@@ -2,6 +2,7 @@ import os
 import cv2
 from torchvision.datasets import CocoDetection
 from copy_paste import copy_paste_class
+import skimage.io as io
 
 min_keypoints_per_image = 10
 
@@ -56,8 +57,8 @@ class CocoDetectionCP(CocoDetection):
         target = self.coco.loadAnns(ann_ids)
 
         img = self.coco.loadImgs(img_id)[0]
-        image = cv2.imread(img['coco_url'])
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = io.imread(img['coco_url'])
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         #convert all of the target segmentations to masks
         #bboxes are expected to be (y1, x1, y2, x2, category_id)
