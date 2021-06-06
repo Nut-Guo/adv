@@ -319,7 +319,7 @@ def copy_paste_class(dataset_class):
         mask = (d[:,3] - d[:,1]) > 10
         mask = mask.logical_and((d[:,2] - d[:,0]) > 10)
         result = {
-            'image': img_data['image'].unsqueeze(0).permute(0, 3, 1, 2),
+            'image': img_data['image'].unsqueeze(0),
             'bboxes': bboxes[mask].unsqueeze(0)
         }
         return result
