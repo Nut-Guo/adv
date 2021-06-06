@@ -304,8 +304,11 @@ def copy_paste_class(dataset_class):
             img_data = self.copy_paste(**img_data, **paste_img_data)
             img_data = self.post_transforms(**img_data)
             img_data['paste_index'] = paste_idx
-
-        return img_data
+        result = {
+            'image': img_data['image'],
+            'bboxes': img_data['bboxes']
+        }
+        return result
 
     setattr(dataset_class, '_split_transforms', _split_transforms)
     setattr(dataset_class, '__getitem__', __getitem__)
