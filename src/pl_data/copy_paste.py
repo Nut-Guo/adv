@@ -4,6 +4,7 @@ import random
 import numpy as np
 import albumentations as A
 from copy import deepcopy
+import torch
 from skimage.filters import gaussian
 
 def image_copy_paste(img, paste_img, alpha, blend=True, sigma=1):
@@ -305,8 +306,8 @@ def copy_paste_class(dataset_class):
             img_data = self.post_transforms(**img_data)
             img_data['paste_index'] = paste_idx
         result = {
-            'image': img_data['image'],
-            'bboxes': img_data['bboxes']
+            'image': torch.tensor(img_data['image']),
+            'bboxes': torch.tensor(img_data['bboxes'])
         }
         return result
 
