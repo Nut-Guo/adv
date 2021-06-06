@@ -53,6 +53,7 @@ class CocoDetectionCP(CocoDetection):
         transforms: ValueNode, max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person']
 
     ):
+        print(transforms)
         transforms = A.Compose(transforms)
         ann_file = os.path.join(path, ann_file)
         if not os.path.exists(ann_file):
@@ -88,8 +89,8 @@ class CocoDetectionCP(CocoDetection):
         bboxes = []
         for ix, obj in enumerate(target):
             masks.append(self.coco.annToMask(obj))
-            # if obj['category_id'] in self.filter_classes:
-            bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
+            if obj['category_id'] in self.filter_classes:
+                bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
 
         #pack outputs into a dict
         output = {
