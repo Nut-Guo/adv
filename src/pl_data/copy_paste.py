@@ -319,7 +319,7 @@ def copy_paste_class(dataset_class):
         bboxes = torch.stack([x1, y1, x2, y2]).T
         mask = (d[:,3] - d[:,1]) > 10
         mask = mask.logical_and((d[:,2] - d[:,0]) > 10)
-        img_data['image'] = ToTensor()(img_data)['image']
+        img_data['image'] = ToTensor()(**img_data)['image']
         result = {
             'image': img_data['image'].unsqueeze(0),
             'bboxes': bboxes[mask].unsqueeze(0)
