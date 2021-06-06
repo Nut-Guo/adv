@@ -46,17 +46,19 @@ def has_valid_annotation(anno):
 class CocoDetectionCP(CocoDetection):
     def __init__(
         self,
-        root,
+        name: ValueNode,
+        path: ValueNode,
+        image_size: ValueNode,
         annFile,
-        transforms,
-        filter_classes=['person']
+        transforms: ValueNode, max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person']
+
     ):
         transforms = A.Compose(transforms)
-        annFile = os.path.join(root, annFile)
+        annFile = os.path.join(path, annFile)
         if not os.path.exists(annFile):
             download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", annFile)
         super(CocoDetectionCP, self).__init__(
-            root, annFile, None, None, transforms
+            path, annFile, None, None, transforms
         )
 
         # filter images without detection annotations
