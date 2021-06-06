@@ -67,8 +67,8 @@ class CocoDetectionCP(CocoDetection):
 
         # filter images without detection annotations
         ids = []
-        # catIds = self.coco.getCatIds(catNms=filter_classes)
-        # self.ids = self.coco.getImgIds(catIds=catIds)
+        catIds = self.coco.getCatIds(catNms=filter_classes)
+        self.ids = self.coco.getImgIds(catIds=catIds)
         for img_id in self.ids:
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
             anno = self.coco.loadAnns(ann_ids)
@@ -92,8 +92,8 @@ class CocoDetectionCP(CocoDetection):
         bboxes = []
         for ix, obj in enumerate(target):
             masks.append(self.coco.annToMask(obj))
-            # if obj['category_id'] in self.filter_classes:
-            bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
+            if obj['category_id'] in self.filter_classes:
+                bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
 
         #pack outputs into a dict
         output = {
