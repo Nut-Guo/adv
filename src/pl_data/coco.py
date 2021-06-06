@@ -1,7 +1,7 @@
 import os
 import cv2
 from torchvision.datasets import CocoDetection
-from copy_paste import copy_paste_class
+from src.pl_data.copy_paste import copy_paste_class
 import skimage.io as io
 import albumentations as A
 from src.pl_modules.yolo import NAME2ID
