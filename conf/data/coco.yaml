@@ -6,8 +6,9 @@ datamodule:
     train:
       _target_: src.pl_data.coco.CocoDetectionCP
       name: PersonDataset
+      root: ''
       path: ${oc.env:TRAIN_DATASET_PATH}
-      ann_file: 'annotations/instances_train2017.json'
+      ann_file: 'data/annotations/instances_train2017.json'
       transforms:
         random_scale:
           _target_: albumentations.RandomScale

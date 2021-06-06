@@ -42,6 +42,7 @@ class CocoDetectionCP(CocoDetection):
     def __init__(
         self,
         name: ValueNode,
+        root: ValueNode,
         path: ValueNode,
         image_size: ValueNode,
         ann_file,
@@ -58,11 +59,10 @@ class CocoDetectionCP(CocoDetection):
         #     ToTensor()
         # ], bbox_params=A.BboxParams(format="coco", min_visibility=0.05)
         # )
-        ann_file = os.path.join(path, ann_file)
         if not os.path.exists(ann_file):
-            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", path)
+            download_data("http://images.cocodataset.org/annotations/annotations_trainval2017.zip", 'data')
         super(CocoDetectionCP, self).__init__(
-            path, ann_file, None, None, transforms
+            root, ann_file, None, None, transforms
         )
 
         # filter images without detection annotations
@@ -83,7 +83,11 @@ class CocoDetectionCP(CocoDetection):
         target = self.coco.loadAnns(ann_ids)
 
         img = self.coco.loadImgs(img_id)[0]
-        image = io.imread(img['coco_url'])
+        if self.root:
+            path = self.coco.loadImgs(img_id)[0]['file_name']
+            image = io.imread(os.path.join(self.root, path))
+        else:
+            image = io.imread(img['coco_url'])
         # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         #convert all of the target segmentations to masks
