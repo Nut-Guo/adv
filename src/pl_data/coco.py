@@ -45,6 +45,7 @@ class CocoDetectionCP(CocoDetection):
         root: ValueNode,
         path: ValueNode,
         image_size: ValueNode,
+        image_exist: ValueNode,
         ann_file,
         transforms: ValueNode, max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person']
 
@@ -66,7 +67,7 @@ class CocoDetectionCP(CocoDetection):
         super(CocoDetectionCP, self).__init__(
             root, anno_path, None, None, transforms
         )
-
+        self.exist = image_exist
         # filter images without detection annotations
         ids = []
         catIds = self.coco.getCatIds(catNms=filter_classes)
@@ -85,7 +86,7 @@ class CocoDetectionCP(CocoDetection):
         target = self.coco.loadAnns(ann_ids)
 
         img = self.coco.loadImgs(img_id)[0]
-        if self.root:
+        if self.exist:
             path = self.coco.loadImgs(img_id)[0]['file_name']
             image = io.imread(os.path.join(self.root, path))
         else:
