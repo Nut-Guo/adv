@@ -146,17 +146,23 @@ class CocoDetectionCP(CocoDetection):
         bboxes = []
         for ix, obj in enumerate(target):
             masks.append(self.coco.annToMask(obj))
-            if obj['category_id'] in self.person_id:
-                bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
+            # if obj['category_id'] in self.person_id:
+            bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
 
+        person_filter = filter(lambda b: b[4] == 1, bboxes)
         #pack outputs into a dict
         output = {
             'image': image,
             'masks': masks,
-            'bboxes': bboxes[0]
+            'bboxes': bboxes[person_filter]
         }
         return self.transforms(**output)
 
+    def __len__(self):
+        return len(self.ids)
+
+    def __repr__(self) -> str:
+        return f"CocoDataset({self.name}, {self.path})"
 # class CocoDataset(object):
 #     def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, transforms: ValueNode,
 #                  max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person'], **kwargs):
@@ -206,8 +212,8 @@ class CocoDetectionCP(CocoDetection):
 #             "bboxes": torch.stack(result['bboxes']),
 #         }
 #
-#     def __len__(self):
-#         return len(self.ids)
-#
-#     def __repr__(self) -> str:
-#         return f"CocoDataset({self.name}, {self.path})"
+    # def __len__(self):
+    #     return len(self.ids)
+    #
+    # def __repr__(self) -> str:
+    #     return f"CocoDataset({self.name}, {self.path})"
