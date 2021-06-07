@@ -72,7 +72,7 @@ class CocoDetectionCP(CocoDetection):
         img_ids = self.coco.getImgIds()
         person_id = self.coco.getCatIds(catNms=filter_classes)
         person_img_ids = self.coco.getImgIds(catIds=person_id)
-        img_ids = list(set(img_ids) - set(self.person_img_ids))
+        img_ids = list(set(img_ids) - set(person_img_ids))
         for img_id in img_ids:
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
             anno = self.coco.loadAnns(ann_ids)
