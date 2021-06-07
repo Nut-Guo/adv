@@ -40,9 +40,9 @@ class ImageScaler(nn.Module):
         super(ImageScaler, self).__init__()
         scaled_size = int(416 * portion) % 2
         pad_size = (416 - scaled_size) // 2
-        self.transform = transforms.Compose(
+        self.transform = transforms.Compose([
             transforms.Resize(scaled_size),
-            transforms.Pad(pad_size)
+            transforms.Pad(pad_size)]
         )
 
     def forward(self, img):
