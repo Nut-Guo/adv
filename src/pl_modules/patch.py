@@ -48,7 +48,7 @@ class ImageScaler(nn.Module):
     def forward(self, img):
         # bereken de total variation van de adv_patch
         scaled = self.transform(img[-1]).unsqueeze(0)
-        return torch.cat(img, scaled)
+        return torch.cat([img, scaled], 0)
 
 
 class PatchTransformer(nn.Module):
