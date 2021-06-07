@@ -32,7 +32,7 @@ class PatchNet(pl.LightningModule):
         self.patch_size = patch_size
         self.patch = self.generate_patch(init_patch)
         self.register_parameter(name='patch', param=self.patch)
-        self.scalar = ImageScaler(0.5)
+        self.scaler = ImageScaler(0.5)
         self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
 
     def generate_patch(self, patch_type):
@@ -103,7 +103,7 @@ class PatchNet(pl.LightningModule):
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         self.yolo.eval()
         for i in range(4):
-            patched_batch = self.scalar(patched_batch)
+            patched_batch = self.scaler(patched_batch)
         detections = self.yolo(patched_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
