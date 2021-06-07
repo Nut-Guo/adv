@@ -29,6 +29,28 @@ class TotalVariation(nn.Module):
         return tv / torch.numel(adv_patch)
 
 
+class ImageScaler(nn.Module):
+    """TotalVariation: calculates the total variation of a patch.
+
+    Module providing the functionality necessary to calculate the total vatiation (TV) of an adversarial patch.
+
+    """
+
+    def __init__(self, portion):
+        super(ImageScaler, self).__init__()
+        scaled_size = int(416 * portion) % 2
+        pad_size = (416 - scaled_size) // 2
+        self.transform = transforms.Compose(
+            transforms.Resize(scaled_size),
+            transforms.Pad(pad_size)
+        )
+
+    def forward(self, img):
+        # bereken de total variation van de adv_patch
+        scaled = self.transform(img[-1]).unsqueeze(0)
+        return torch.cat(img, scaled)
+
+
 class PatchTransformer(nn.Module):
     """PatchTransformer: transforms batch of patches
 
