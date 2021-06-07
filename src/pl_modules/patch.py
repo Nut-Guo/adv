@@ -38,7 +38,7 @@ class ImageScaler(nn.Module):
 
     def __init__(self, portion):
         super(ImageScaler, self).__init__()
-        scaled_size = int(416 * portion) % 2
+        scaled_size = int(416 * portion) - int(416 * portion) % 2
         pad_size = (416 - scaled_size) // 2
         self.transform = transforms.Compose([
             transforms.Resize(scaled_size),
