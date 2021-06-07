@@ -144,8 +144,8 @@ class CocoDetectionCP(CocoDetection):
         bboxes = []
         for ix, obj in enumerate(target):
             masks.append(self.coco.annToMask(obj))
-            # if obj['category_id'] in self.person_id:
-            bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
+            if obj['category_id'] in self.person_id:
+                bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
 
         # person_filter = filter(lambda b: b[4] == 1, bboxes)
         #pack outputs into a dict
