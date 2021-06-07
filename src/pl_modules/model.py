@@ -120,19 +120,20 @@ class PatchNet(pl.LightningModule):
             # self.log("confidence", torch.tensor(0, device='cuda'))
             self.logger.agg_and_log_metrics({"success_rate": 1})
 
-        atts = torch.sum((detections[:, :, 3] - detections[:, :, 1]) *
-                         (detections[:, :, 2] - detections[:, :, 0]) *
-                         detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
-        # adv_mask = adv_batch != 0
-        # adv_box = mask2bbox(adv_mask).expand_as(detections[:, :, :4])
-        # inter_x0 = torch.max(adv_box[:, :, 0], detections[:, :, 0])
-        # inter_x1 = torch.min(adv_box[:, :, 2], detections[:, :, 2])
-        # inter_y0 = torch.max(adv_box[:, :, 1], detections[:, :, 1])
-        # inter_y1 = torch.min(adv_box[:, :, 3], detections[:, :, 3])
-        # adv_atts = torch.sum((inter_y1 - inter_y0) *
-        #                  (inter_x1 - inter_x0) *
-        #                  detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
-        att_loss = atts.sum()  # - adv_atts.sum()
+        if self.log_att:
+            atts = torch.sum((detections[:, :, 3] - detections[:, :, 1]) *
+                             (detections[:, :, 2] - detections[:, :, 0]) *
+                             detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
+            # adv_mask = adv_batch != 0
+            # adv_box = mask2bbox(adv_mask).expand_as(detections[:, :, :4])
+            # inter_x0 = torch.max(adv_box[:, :, 0], detections[:, :, 0])
+            # inter_x1 = torch.min(adv_box[:, :, 2], detections[:, :, 2])
+            # inter_y0 = torch.max(adv_box[:, :, 1], detections[:, :, 1])
+            # inter_y1 = torch.min(adv_box[:, :, 3], detections[:, :, 3])
+            # adv_atts = torch.sum((inter_y1 - inter_y0) *
+            #                  (inter_x1 - inter_x0) *
+            #                  detections[:, :, 4], dim=1) / (image_batch.shape[-1] * image_batch.shape[-2])
+            att_loss = atts.sum()  # - adv_atts.sum()
         if batch_idx % self.log_interval == 0:
             # if self.log_att:
             #     # orig_attentions = torch.zeros_like(image_batch[:, 0, :, :], requires_grad=False)
@@ -163,8 +164,11 @@ class PatchNet(pl.LightningModule):
                 # 'attention_map': wandb.Image(attentions.clone().detach().unsqueeze(dim=1))
             },
                 commit=False)
-        loss = det_loss + tv_loss + att_loss
-        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss, "att_loss": att_loss}
+        loss = det_loss + tv_loss
+        losses = {'loss': loss, "det_loss": det_loss, "tv_loss": tv_loss}
+        if self.log_att:
+            loss += att_loss
+            losses['att_loss'] = att_loss
         return losses
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
