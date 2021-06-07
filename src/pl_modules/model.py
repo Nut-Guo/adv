@@ -173,17 +173,29 @@ class PatchNet(pl.LightningModule):
 
     def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
         losses = self.step(batch, batch_idx)
-        self.log_dict(
-            {
-                "train_loss": losses['loss'],
-                "train_det_loss": losses['det_loss'],
-                "train_tv_loss": losses['tv_loss'],
-                "train_att_loss": losses['att_loss'],
-            },
-            on_step=True,
-            on_epoch=True,
-            prog_bar=True,
-        )
+        if self.log_att:
+            self.log_dict(
+                {
+                    "train_loss": losses['loss'],
+                    "train_det_loss": losses['det_loss'],
+                    "train_tv_loss": losses['tv_loss'],
+                    "train_att_loss": losses['att_loss'],
+                },
+                on_step=True,
+                on_epoch=True,
+                prog_bar=True,
+            )
+        else :
+            self.log_dict(
+                {
+                    "train_loss": losses['loss'],
+                    "train_det_loss": losses['det_loss'],
+                    "train_tv_loss": losses['tv_loss'],
+                },
+                on_step=True,
+                on_epoch=True,
+                prog_bar=True,
+            )
         return losses['loss']
 
     def validation_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
