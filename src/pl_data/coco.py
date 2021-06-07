@@ -69,21 +69,19 @@ class CocoDetectionCP(CocoDetection):
         self.exist = image_exist
         # filter images without detection annotations
         ids = []
-        cats = self.coco.loadCats(self.coco.getCatIds())
-        nms = [cat['name'] for cat in cats]
-        nonperson = filter(lambda c: c != 'person', nms)
-        catIds = self.coco.getCatIds(catNms=list(nonperson))
-        self.ids = self.coco.getImgIds(catIds=catIds)
-        for img_id in self.ids:
+        img_ids = self.coco.getImgIds()
+        person_id = self.coco.getCatIds(catNms=filter_classes)
+        person_img_ids = self.coco.getImgIds(catIds=person_id)
+        img_ids = list(set(img_ids) - set(self.person_img_ids))
+        for img_id in img_ids:
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
             anno = self.coco.loadAnns(ann_ids)
             if has_valid_annotation(anno):
                 ids.append(img_id)
         self.ids = ids
         person_ids = []
-        person_id = self.coco.getCatIds(catNms=filter_classes)
-        self.person_ids = self.coco.getImgIds(catIds=person_id)
-        for img_id in self.person_ids:
+
+        for img_id in person_img_ids:
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
             anno = self.coco.loadAnns(ann_ids)
             if has_valid_annotation(anno):
@@ -146,23 +144,23 @@ class CocoDetectionCP(CocoDetection):
         bboxes = []
         for ix, obj in enumerate(target):
             masks.append(self.coco.annToMask(obj))
-            # if obj['category_id'] in self.person_id:
-            bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
+            if obj['category_id'] in self.person_id:
+                bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
 
         # person_filter = filter(lambda b: b[4] == 1, bboxes)
         #pack outputs into a dict
         output = {
             'image': image,
             'masks': masks,
-            'bboxes': bboxes
+            'bboxes': bboxes[0]
         }
         return self.transforms(**output)
 
-    def __len__(self):
-        return len(self.ids)
-
-    def __repr__(self) -> str:
-        return f"CocoDataset({self.name}, {self.path})"
+    # def __len__(self):
+    #     return len(self.ids)
+    #
+    # def __repr__(self) -> str:
+    #     return f"CocoDataset({self.name}, {self.path})"
 # class CocoDataset(object):
 #     def __init__(self, name: ValueNode, path: ValueNode, image_size: ValueNode, transforms: ValueNode,
 #                  max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person'], **kwargs):
