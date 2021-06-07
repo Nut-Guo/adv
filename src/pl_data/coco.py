@@ -152,7 +152,7 @@ class CocoDetectionCP(CocoDetection):
         output = {
             'image': image,
             'masks': masks,
-            'bboxes': bboxes[0]
+            'bboxes': [bboxes[0]]
         }
         return self.transforms(**output)
 
