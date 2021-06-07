@@ -69,7 +69,10 @@ class CocoDetectionCP(CocoDetection):
         self.exist = image_exist
         # filter images without detection annotations
         ids = []
-        catIds = self.coco.getCatIds(catNms=filter_classes)
+        cats = self.coco.loadCats(self.coco.getCatIds())
+        nms = [cat['name'] for cat in cats]
+        nonperson = filter(lambda c: c != 'person', nms)
+        catIds = self.coco.getCatIds(catNms=list(nonperson))
         self.ids = self.coco.getImgIds(catIds=catIds)
         for img_id in self.ids:
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
@@ -77,7 +80,16 @@ class CocoDetectionCP(CocoDetection):
             if has_valid_annotation(anno):
                 ids.append(img_id)
         self.ids = ids
-        self.filter_classes = self.coco.getCatIds(catNms=filter_classes)
+        person_ids = []
+        person_id = self.coco.getCatIds(catNms=filter_classes)
+        self.person_ids = self.coco.getImgIds(catIds=person_id)
+        for img_id in self.person_ids:
+            ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
+            anno = self.coco.loadAnns(ann_ids)
+            if has_valid_annotation(anno):
+                person_ids.append(img_id)
+        self.person_ids = person_ids
+        self.person_id = person_id
 
     def load_example(self, index):
         img_id = self.ids[index]
@@ -109,6 +121,39 @@ class CocoDetectionCP(CocoDetection):
             'image': image,
             'masks': masks,
             'bboxes': bboxes
+        }
+        return self.transforms(**output)
+
+    def load_person(self, index):
+        img_id = self.person_ids[index]
+        ann_ids = self.coco.getAnnIds(imgIds=img_id)
+        target = self.coco.loadAnns(ann_ids)
+
+        img = self.coco.loadImgs(img_id)[0]
+        if self.exist:
+            path = self.coco.loadImgs(img_id)[0]['file_name']
+            image = io.imread(os.path.join(self.root, path))
+        else:
+            image = io.imread(img['coco_url'])
+        if len(image.shape) == 2:
+            image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        #convert all of the target segmentations to masks
+        #bboxes are expected to be (y1, x1, y2, x2, category_id)
+        masks = []
+        bboxes = []
+        for ix, obj in enumerate(target):
+            masks.append(self.coco.annToMask(obj))
+            if obj['category_id'] in self.person_id:
+                bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
+
+        #pack outputs into a dict
+        output = {
+            'image': image,
+            'masks': masks,
+            'bboxes': bboxes[0]
         }
         return self.transforms(**output)
 
