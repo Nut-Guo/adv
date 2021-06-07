@@ -154,7 +154,7 @@ class CocoDetectionCP(CocoDetection):
         output = {
             'image': image,
             'masks': masks,
-            'bboxes': bboxes[person_filter]
+            'bboxes': list(person_filter)
         }
         return self.transforms(**output)
 
