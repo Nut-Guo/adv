@@ -149,12 +149,12 @@ class CocoDetectionCP(CocoDetection):
             # if obj['category_id'] in self.person_id:
             bboxes.append(obj['bbox'] + [obj['category_id']] + [ix])
 
-        person_filter = filter(lambda b: b[4] == 1, bboxes)
+        # person_filter = filter(lambda b: b[4] == 1, bboxes)
         #pack outputs into a dict
         output = {
             'image': image,
             'masks': masks,
-            'bboxes': list(person_filter)
+            'bboxes': bboxes
         }
         return self.transforms(**output)
 
