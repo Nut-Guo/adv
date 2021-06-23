@@ -102,9 +102,9 @@ class PatchNet(pl.LightningModule):
         patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         self.yolo.eval()
-        # for i in range(3):
-        #     patched_batch = self.scaler(patched_batch)
-        # patched_batch = patched_batch[1:]
+        for i in range(3):
+            patched_batch = self.scaler(patched_batch)
+        patched_batch = patched_batch[1:]
         detections = self.yolo(patched_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
