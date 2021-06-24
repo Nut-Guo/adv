@@ -106,7 +106,7 @@ class CopyPaste(A.DualTransform):
         pct_objects_paste=0.1,
         max_paste_objects=None,
         p=1,
-        always_apply=False
+        always_apply=True
     ):
         super(CopyPaste, self).__init__(always_apply, p)
         self.blend = blend
