@@ -108,7 +108,7 @@ class PatchNet(pl.LightningModule):
             patched_batch = self.scaler(patched_batch)
         patched_batch = patched_batch[1:]
         background = self.background.load_background(batch_idx)
-        patched_batch = torch.where(patched_batch == 0, background['image'], patched_batch)
+        patched_batch = torch.where(patched_batch == 0, background['image'].cuda(), patched_batch)
         detections = self.yolo(patched_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
