@@ -105,7 +105,7 @@ class CopyPaste(A.DualTransform):
         sigma=3,
         pct_objects_paste=0.1,
         max_paste_objects=None,
-        p=0.5,
+        p=1,
         always_apply=False
     ):
         super(CopyPaste, self).__init__(always_apply, p)
