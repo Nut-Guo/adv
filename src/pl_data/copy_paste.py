@@ -298,7 +298,7 @@ def copy_paste_class(dataset_class):
 
         img_data = self.load_person(idx)
         if self.copy_paste is not None:
-            paste_idx = random.randint(0, len(self.person_ids) - 1)
+            paste_idx = random.randint(0, len(self.ids) - 1)
             paste_img_data = self.load_example(paste_idx)
             for k in list(paste_img_data.keys()):
                 paste_img_data['paste_' + k] = paste_img_data[k]
