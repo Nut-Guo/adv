@@ -85,7 +85,10 @@ class CocoDetectionCP(CocoDetection):
             ann_ids = self.coco.getAnnIds(imgIds=img_id, iscrowd=None)
             anno = self.coco.loadAnns(ann_ids)
             if has_valid_annotation(anno):
-                person_ids.append(img_id)
+                for obj in anno:
+                    if obj['category_id'] in person_id:
+                        person_ids.append(img_id)
+                        break
         self.person_ids = person_ids
         self.person_id = person_id
 
