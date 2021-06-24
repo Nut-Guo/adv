@@ -45,7 +45,7 @@ class Background(CocoDetection):
     ):
         transforms = A.Compose([
             A.RandomScale(scale_limit=(-0.9, 1), p=1),  # LargeScaleJitter from scale of 0.1 to 2
-            A.RandomSizedBBoxSafeCrop(416, 416),
+            A.RandomResizedCrop(416, 416),
             ToTensor()
         ])
         anno_path = os.path.join(root, ann_file)
