@@ -72,7 +72,7 @@ class Background(CocoDetection):
         if len(image.shape) == 2:
             image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
 
-        return self.transforms(image)
+        return self.transforms(image=image)
 
     def __len__(self):
         return len(self.ids)
