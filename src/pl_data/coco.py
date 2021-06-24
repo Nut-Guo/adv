@@ -157,7 +157,7 @@ class CocoDetectionCP(CocoDetection):
         return self.transforms(**output)
 
     def __len__(self):
-        return len(self.person_ids)
+        return len(self.ids)
     #
     # def __repr__(self) -> str:
     #     return f"CocoDataset({self.name}, {self.path})"

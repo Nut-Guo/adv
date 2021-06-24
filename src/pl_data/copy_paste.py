@@ -296,10 +296,10 @@ def copy_paste_class(dataset_class):
         if not hasattr(self, 'post_transforms'):
             self._split_transforms()
 
-        img_data = self.load_person(idx)
+        img_data = self.load_example(idx)
         if self.copy_paste is not None:
-            paste_idx = random.randint(0, len(self.ids) - 1)
-            paste_img_data = self.load_example(paste_idx)
+            paste_idx = random.randint(0, len(self.person_ids) - 1)
+            paste_img_data = self.load_person(paste_idx)
             for k in list(paste_img_data.keys()):
                 paste_img_data['paste_' + k] = paste_img_data[k]
                 del paste_img_data[k]
