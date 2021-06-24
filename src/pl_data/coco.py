@@ -47,7 +47,10 @@ class CocoDetectionCP(CocoDetection):
         image_size: ValueNode,
         image_exist: ValueNode,
         ann_file,
-        transforms: ValueNode, max_size: ValueNode = None, augment_size: ValueNode = 1, filter_classes: ValueNode=['person']
+        transforms: ValueNode,
+        max_size: ValueNode = None,
+        augment_size: ValueNode = 1,
+        filter_classes: ValueNode=['person']
 
     ):
         # print(transforms)
@@ -56,7 +59,8 @@ class CocoDetectionCP(CocoDetection):
             A.RandomScale(scale_limit=(-0.9, 1), p=1),  # LargeScaleJitter from scale of 0.1 to 2
             # A.PadIfNeeded(408, 408, border_mode=0), #pads with image in the center, not the top left like the paper
             A.RandomSizedBBoxSafeCrop(416, 416),
-            src.pl_data.copy_paste.CopyPaste(blend=True, sigma=1, pct_objects_paste=1, max_paste_objects = 1, p=1., always_apply=True), # pct_objects_paste is a guess
+            src.pl_data.copy_paste.CopyPaste(blend=True, sigma=1, pct_objects_paste=1,
+                                             max_paste_objects=1, p=1., always_apply=True),
             ToTensor()
         ], bbox_params=A.BboxParams(format="coco", min_visibility=0.05)
         )

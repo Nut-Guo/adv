@@ -12,6 +12,7 @@ from src.common.utils import PROJECT_ROOT, mask2bbox
 from src.pl_modules.yolo import *
 from src.pl_modules.patch import *
 import wandb
+from src.pl_data.back_ground import Background
 import matplotlib.pyplot as plt
 # from src.pl_modules.median_pool import *
 
@@ -33,6 +34,7 @@ class PatchNet(pl.LightningModule):
         self.patch = self.generate_patch(init_patch)
         self.register_parameter(name='patch', param=self.patch)
         self.scaler = ImageScaler(0.5)
+        self.background = Background()
         self.save_hyperparameters()  # populate self.hparams with args and kwargs automagically!
 
     def generate_patch(self, patch_type):
@@ -102,10 +104,11 @@ class PatchNet(pl.LightningModule):
         patched_batch = self.patch_applier(image_batch, adv_batch)
         # image_batch = F.interpolate(image_batch, (self.yolo_config.height, self.yolo_config.width))
         self.yolo.eval()
-        # for i in range(3):
-        #     patched_batch = self.scaler(patched_batch)
-        # patched_batch = patched_batch[1:]
-        # patched_batch = torch.where(patched_batch == 0, image_batch, patched_batch)
+        for i in range(3):
+            patched_batch = self.scaler(patched_batch)
+        patched_batch = patched_batch[1:]
+        background = self.background.load_background(batch_idx)
+        patched_batch = torch.where(patched_batch == 0, background, patched_batch)
         detections = self.yolo(patched_batch)
         pred = self.pred_extractor(detections)
         tv = self.total_variation(self.patch)
